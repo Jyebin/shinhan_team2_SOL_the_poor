@@ -1,0 +1,11 @@
+.idea
+.DS_Store
+db.properties
+application.properties
+*.iml
+
+target/
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+apikey.js
