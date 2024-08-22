@@ -2,7 +2,6 @@ package com.choikang.poor.the_poor_back.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.apache.catalina.User;
 
 @Entity
 @Getter
@@ -35,4 +34,7 @@ public class Account {
 
     @Column
     private double accountCanInterestRate;
+
+    @ManyToOne
+    private User user;
 }
