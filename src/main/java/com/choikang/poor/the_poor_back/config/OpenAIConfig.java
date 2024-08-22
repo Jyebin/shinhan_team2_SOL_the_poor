@@ -10,6 +10,7 @@ import org.springframework.web.client.RestTemplate;
 //OpenAI API와 통신하기 위한 메소드
 @Configuration
 public class OpenAIConfig {
+
     @Value("${openai.api.key}")
     private String openAIKey;
 
