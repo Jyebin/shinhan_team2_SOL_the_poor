@@ -20,7 +20,7 @@ public class OpenAIConfig {
         restTemplate.getInterceptors().add(((request, body, execution) -> {
             HttpHeaders headers = request.getHeaders();
             String apiKey = "Bearer " + openAIKey;
-            System.out.println("키값이에요 키값" + apiKey);
+
             headers.add("Authorization", apiKey);
             headers.add("Content-Type", "application/json");
             return execution.execute(request, body);
