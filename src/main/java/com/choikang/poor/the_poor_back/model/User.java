@@ -22,4 +22,7 @@ public class User {
 
     @Column
     private int userAttendanceCnt;
+
+    @Column(nullable = false)
+    private boolean userHasCan;
 }
