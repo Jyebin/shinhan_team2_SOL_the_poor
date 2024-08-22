@@ -18,7 +18,7 @@ public class Account {
     @Column(length = 50, nullable = false)
     private String accountName;
 
-    @Column(length = 50, nullable = false)
+    @Column(length = 50, nullable = false, unique = true)
     private String accountNumber;
 
     @Column(length = 4, nullable = false)
