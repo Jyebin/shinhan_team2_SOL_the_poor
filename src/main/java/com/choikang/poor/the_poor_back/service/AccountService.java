@@ -10,6 +10,6 @@ public class AccountService {
     private final AccountRepository accountRepository;
 
     public Boolean findUserHasCan(Long userID) {
-        return accountRepository.findUserHasCanByUserId(userID);
+        return accountRepository.findUserHasCanByUserID(userID);
     }
 }
