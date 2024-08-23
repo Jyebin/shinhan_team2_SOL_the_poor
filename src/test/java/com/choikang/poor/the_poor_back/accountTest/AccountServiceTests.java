@@ -1,4 +1,4 @@
 package com.choikang.poor.the_poor_back.accountTest;
 
-public class AccountServiceTest {
+public class AccountServiceTests {
 }

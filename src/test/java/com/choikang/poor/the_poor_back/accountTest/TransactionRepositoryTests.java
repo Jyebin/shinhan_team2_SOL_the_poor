@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 import java.util.stream.IntStream;
 
 @SpringBootTest
-public class TransactionRepositoryTest {
+public class TransactionRepositoryTests {
     @Autowired
     TransactionRepository transactionRepository;
 
