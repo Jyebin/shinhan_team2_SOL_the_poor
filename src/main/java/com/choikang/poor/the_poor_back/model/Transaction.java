@@ -19,7 +19,7 @@ public class Transaction {
     @Column(nullable = false)
     private int transactionMoney;
 
-    @Column(length = 5, nullable = false)
+    @Column(length = 10, nullable = false)
     private String transactionName;
 
     @Column(nullable = false)
