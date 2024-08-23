@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 public class AccountService {
     private final AccountRepository accountRepository;
 
-    public Boolean heHasCan(Long userID) {
-        return accountRepository.findHasCanByUserId(userID);
+    public Boolean findUserHasCan(Long userID) {
+        return accountRepository.findUserHasCanByUserId(userID);
     }
 }

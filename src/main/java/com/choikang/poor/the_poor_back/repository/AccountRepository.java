@@ -7,5 +7,5 @@ import org.springframework.data.repository.query.Param;
 
 public interface AccountRepository extends JpaRepository<Account, Long> {
     @Query("SELECT u.userHasCan FROM User u WHERE u.userID = :userID")
-    Boolean findHasCanByUserId(@Param("userId") Long userId);
+    Boolean findUserHasCanByUserId(@Param("userId") Long userId);
 }
