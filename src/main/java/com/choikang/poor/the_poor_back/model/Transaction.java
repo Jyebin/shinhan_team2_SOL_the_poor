@@ -25,6 +25,9 @@ public class Transaction {
     @Column(nullable = false)
     private LocalDateTime transactionDate;
 
+    @Column(nullable = false)
+    private Boolean transactionIsDeposit;
+
     @ManyToOne
     @JoinColumn(name="accountID", nullable = false)
     private Account account;
