@@ -16,11 +16,7 @@ public class User {
 
     private String userName;
 
-    private String userPW;
-
     private String userEmail;
-
-    private String userPhone;
 
     private int userAttendanceCnt;
 }

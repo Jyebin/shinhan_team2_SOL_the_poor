@@ -1,6 +1,7 @@
 package com.choikang.poor.the_poor_back.controller;
 
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -20,7 +21,8 @@ public class AuthController {
         // 실제 구현에서는 이 정보를 처리하고 자체 토큰을 생성해야 합니다.
 
         // 처리가 완료되면 리액트 앱으로 리다이렉트합니다.
-        response.sendRedirect("http://localhost:3000/login-success?token=sample_token");
+        response.sendRedirect("http://localhost:3000");
     }
+
 
 }
