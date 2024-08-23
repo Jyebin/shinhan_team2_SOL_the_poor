@@ -1,4 +1,4 @@
-package com.choikang.poor.the_poor_back.account;
+package com.choikang.poor.the_poor_back.accountTest;
 
 import com.choikang.poor.the_poor_back.model.Account;
 import com.choikang.poor.the_poor_back.model.User;

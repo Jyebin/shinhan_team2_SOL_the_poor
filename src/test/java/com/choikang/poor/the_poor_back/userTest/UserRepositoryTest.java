@@ -1,4 +1,4 @@
-package com.choikang.poor.the_poor_back.user;
+package com.choikang.poor.the_poor_back.userTest;
 
 import com.choikang.poor.the_poor_back.model.User;
 import com.choikang.poor.the_poor_back.repository.UserRepository;

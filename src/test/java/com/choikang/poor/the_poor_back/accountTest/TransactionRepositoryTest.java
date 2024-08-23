@@ -1,4 +1,4 @@
-package com.choikang.poor.the_poor_back.account;
+package com.choikang.poor.the_poor_back.accountTest;
 
 import com.choikang.poor.the_poor_back.model.Account;
 import com.choikang.poor.the_poor_back.model.Transaction;
@@ -6,7 +6,6 @@ import com.choikang.poor.the_poor_back.repository.TransactionRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cglib.core.Local;
 
 import java.time.LocalDateTime;
 import java.util.stream.IntStream;
