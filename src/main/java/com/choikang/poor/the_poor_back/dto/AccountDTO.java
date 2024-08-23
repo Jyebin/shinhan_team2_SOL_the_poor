@@ -1,5 +1,6 @@
 package com.choikang.poor.the_poor_back.dto;
 
+import com.choikang.poor.the_poor_back.model.Account;
 import lombok.*;
 
 @Data
