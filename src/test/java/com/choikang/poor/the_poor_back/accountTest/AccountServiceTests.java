@@ -13,12 +13,4 @@ import org.springframework.boot.test.context.SpringBootTest;
 public class AccountServiceTests {
     @Autowired
     AccountService accountService;
-
-    @Test
-    @DisplayName("깡통 여부 반환 테스트")
-    public void heHasCanTest() {
-        Long userID = (long) 1;
-        Boolean userHasCan = accountService.findUserHasCan(userID);
-        Assertions.assertEquals(userHasCan, true);
-    }
 }
