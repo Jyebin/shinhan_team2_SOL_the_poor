@@ -36,5 +36,6 @@ public class Account {
     private double accountCanInterestRate;
 
     @ManyToOne
+    @JoinColumn(name="userID", nullable = false)
     private User user;
 }
