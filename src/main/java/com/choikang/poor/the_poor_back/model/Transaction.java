@@ -28,6 +28,9 @@ public class Transaction {
     @Column(nullable = false)
     private Boolean transactionIsDeposit;
 
+    @Column(nullable = false)
+    private int transactionBalance;
+
     @ManyToOne
     @JoinColumn(name="accountID", nullable = false)
     private Account account;
