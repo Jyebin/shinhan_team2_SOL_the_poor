@@ -23,7 +23,7 @@ public class AccountRepositoryTest {
                 .accountName("쏠편한 입출금통장(저축예금)")
                 .accountNumber("110-576-040419")
                 .accountHasCan(true)
-                .accountCanAmount(13000)
+                .accountCanAmount(1700)
                 .accountCanInterestRate(8.00)
                 .user(user)
                 .build();
