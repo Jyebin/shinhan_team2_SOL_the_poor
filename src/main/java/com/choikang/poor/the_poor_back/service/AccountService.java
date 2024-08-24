@@ -24,10 +24,10 @@ public class AccountService {
 
     private AccountDTO convertToDTO(Account account) {
         AccountDTO accountDTO = new AccountDTO();
-        accountDTO.setAccountNumber(account.getAccountNumber());
-        accountDTO.setAccountName(account.getAccountName());
-        accountDTO.setAccountBalance(account.getAccountBalance());
-        accountDTO.setAccountHasCan(account.isAccountHasCan());
+        accountDTO.setNumber(account.getAccountNumber());
+        accountDTO.setName(account.getAccountName());
+        accountDTO.setBalance(account.getAccountBalance());
+        accountDTO.setHasCan(account.isAccountHasCan());
         return accountDTO;
     }
 }

@@ -9,8 +9,8 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AccountDTO {
-    private String accountNumber;
-    private String accountName;
-    private int accountBalance;
-    private Boolean accountHasCan;
+    private String number;
+    private String name;
+    private int balance;
+    private Boolean hasCan;
 }
