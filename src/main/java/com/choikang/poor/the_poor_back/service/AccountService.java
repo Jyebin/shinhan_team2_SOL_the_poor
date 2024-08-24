@@ -5,6 +5,7 @@ import com.choikang.poor.the_poor_back.dto.TransactionDTO;
 import com.choikang.poor.the_poor_back.model.Account;
 import com.choikang.poor.the_poor_back.model.Transaction;
 import com.choikang.poor.the_poor_back.repository.AccountRepository;
+import com.choikang.poor.the_poor_back.repository.TransactionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,9 @@ public class AccountService {
     @Autowired
     AccountRepository accountRepository;
 
+    @Autowired
+    TransactionRepository transactionRepository;
+
     public List<AccountDTO> getAccountsByUserID(Long userID) {
         List<Account> accounts = accountRepository.findByUserUserID(userID);
         return accounts.stream()
@@ -28,7 +32,7 @@ public class AccountService {
     }
 
     public List<TransactionDTO> getTransactionsByAccountID(Long accountID) {
-        List<Transaction> transactions = accountRepository.findByAccountAccountID(accountID);
+        List<Transaction> transactions = transactionRepository.findByAccountAccountID(accountID);
         return transactions.stream()
                 .map(TransactionDTO::convertToDTO)
                 .collect(Collectors.toList());

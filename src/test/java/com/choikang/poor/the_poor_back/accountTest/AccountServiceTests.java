@@ -50,15 +50,15 @@ public class AccountServiceTests {
         Assertions.assertEquals(2, accounts.size());
 
         AccountDTO accountDTO1 = accounts.get(0);
-        Assertions.assertEquals("110-576-040419", accountDTO1.getAccountNumber());
-        Assertions.assertEquals("쏠편한 입출금통장(저축예금)", accountDTO1.getAccountName());
-        Assertions.assertEquals(100000000, accountDTO1.getAccountBalance());
-        Assertions.assertTrue(accountDTO1.getAccountHasCan());
+        Assertions.assertEquals("110-576-040419", accountDTO1.getNumber());
+        Assertions.assertEquals("쏠편한 입출금통장(저축예금)", accountDTO1.getName());
+        Assertions.assertEquals(100000000, accountDTO1.getBalance());
+        Assertions.assertTrue(accountDTO1.getHasCan());
 
         AccountDTO accountDTO2 = accounts.get(1);
-        Assertions.assertEquals("110-233-298374", accountDTO2.getAccountNumber());
-        Assertions.assertEquals("신한 슈퍼SOL 통장", accountDTO2.getAccountName());
-        Assertions.assertEquals(100000, accountDTO2.getAccountBalance());
-        Assertions.assertFalse(accountDTO2.getAccountHasCan());
+        Assertions.assertEquals("110-233-298374", accountDTO2.getNumber());
+        Assertions.assertEquals("신한 슈퍼SOL 통장", accountDTO2.getName());
+        Assertions.assertEquals(100000, accountDTO2.getBalance());
+        Assertions.assertFalse(accountDTO2.getHasCan());
     }
 }
