@@ -1,6 +1,7 @@
 package com.choikang.poor.the_poor_back.controller;
 
 import com.choikang.poor.the_poor_back.dto.AccountDTO;
+import com.choikang.poor.the_poor_back.dto.TransactionDTO;
 import com.choikang.poor.the_poor_back.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -21,5 +22,10 @@ public class AccountController {
     @GetMapping("/list")
     public List<AccountDTO> getAccountList(Long userID) {
         return accountService.getAccountsByUserID(userID);
+    }
+
+    @GetMapping("/transaction/list")
+    public List<TransactionDTO> getTransactionList(Long accountID) {
+        return accountService.getTransactionsByAccountID(accountID);
     }
 }
