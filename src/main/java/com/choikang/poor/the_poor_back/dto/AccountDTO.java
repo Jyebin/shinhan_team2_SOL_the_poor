@@ -9,6 +9,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AccountDTO {
+    private Long accountID;
     private String number;
     private String name;
     private int balance;
