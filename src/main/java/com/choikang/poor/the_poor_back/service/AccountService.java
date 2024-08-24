@@ -32,7 +32,7 @@ public class AccountService {
     }
 
     public List<TransactionDTO> getTransactionsByAccountID(Long accountID) {
-        List<Transaction> transactions = transactionRepository.findByAccountAccountID(accountID);
+        List<Transaction> transactions = transactionRepository.findByAccountAccountIDOrderByTransactionDateDesc(accountID);
         return transactions.stream()
                 .map(TransactionDTO::convertToDTO)
                 .collect(Collectors.toList());
