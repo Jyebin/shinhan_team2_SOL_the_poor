@@ -19,15 +19,8 @@ public class AccountService {
 
     public List<AccountDTO> getAccountsByUserID(Long userID) {
         List<Account> accounts = accountRepository.findByUserUserID(userID);
-        return accounts.stream().map(this::convertToDTO).collect(Collectors.toList());
-    }
-
-    private AccountDTO convertToDTO(Account account) {
-        AccountDTO accountDTO = new AccountDTO();
-        accountDTO.setNumber(account.getAccountNumber());
-        accountDTO.setName(account.getAccountName());
-        accountDTO.setBalance(account.getAccountBalance());
-        accountDTO.setHasCan(account.isAccountHasCan());
-        return accountDTO;
+        return accounts.stream()
+                .map(AccountDTO::convertToDTO)
+                .collect(Collectors.toList());
     }
 }
