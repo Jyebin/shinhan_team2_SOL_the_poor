@@ -18,7 +18,7 @@ public class AccountService {
     AccountRepository accountRepository;
 
     public List<AccountDTO> getAccountsByUserID(Long userID) {
-        List<Account> accounts = accountRepository.findByUserID(userID);
+        List<Account> accounts = accountRepository.findByUserUserID(userID);
         return accounts.stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 

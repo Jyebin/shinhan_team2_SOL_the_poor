@@ -1,6 +1,5 @@
 package com.choikang.poor.the_poor_back.controller;
 
-import com.choikang.poor.the_poor_back.service.AccountService;
 import com.choikang.poor.the_poor_back.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
