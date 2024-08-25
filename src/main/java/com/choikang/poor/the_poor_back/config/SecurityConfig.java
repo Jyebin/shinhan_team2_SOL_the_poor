@@ -3,24 +3,23 @@ package com.choikang.poor.the_poor_back.config;
 import com.choikang.poor.the_poor_back.security.filter.APICheckFilter;
 import com.choikang.poor.the_poor_back.security.handler.LoginSuccessHandler;
 import com.choikang.poor.the_poor_back.security.util.JWTUtil;
-import com.choikang.poor.the_poor_back.service.OAuth2UserService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
 @Log4j2
-@EnableMethodSecurity
 public class SecurityConfig {
     private final OAuth2UserService oAuth2UserService;
 
-    public SecurityConfig(OAuth2UserService oAuth2UserService) {
+    public SecurityConfig(@Lazy OAuth2UserService oAuth2UserService) {
         this.oAuth2UserService = oAuth2UserService;
     }
 
@@ -31,11 +30,11 @@ public class SecurityConfig {
 
         // 인증에 따른 접근 설정, 로그인페이지 외에는 로그인하지 않은 상태일 시 접근 불가
         http.authorizeHttpRequests(auth -> auth
-                .requestMatchers("/login").permitAll()
-                .anyRequest().authenticated()
+                .requestMatchers("/login", "/api/oauth2/kakao").permitAll()
+                .anyRequest().permitAll()
+//                .anyRequest().authenticated()
         );
 
-        // oauth 로그인 기능 설정
         http.oauth2Login(oaUth2Configuer -> oaUth2Configuer
                 .loginPage("/login") // 로그인 페이지 경로 설정
                 .successHandler(loginSuccessHandler()) // 로그인 성공 시 실행되는 핸들러
@@ -47,7 +46,7 @@ public class SecurityConfig {
             c.defaultSuccessUrl("/");
         });
 
-        // 비밀번호는 따로 없지만 UsernamePasswordAuthenticationFilter.class를 참조 역할로 사용하고 있음
+//         비밀번호는 따로 없지만 UsernamePasswordAuthenticationFilter.class를 참조 역할로 사용하고 있음
         http.addFilterBefore(apiCheckFilter(), UsernamePasswordAuthenticationFilter.class);
 
         // 로그아웃

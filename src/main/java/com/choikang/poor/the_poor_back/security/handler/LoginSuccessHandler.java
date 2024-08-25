@@ -16,6 +16,7 @@ import java.nio.charset.StandardCharsets;
 
 @Log4j2
 public class LoginSuccessHandler implements AuthenticationSuccessHandler {
+
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
                                         Authentication authentication) throws IOException {
@@ -36,10 +37,8 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding(StandardCharsets.UTF_8.name());
 
-
         PrintWriter writer = response.getWriter();
         writer.println(body);
         writer.flush();
-
     }
 }
