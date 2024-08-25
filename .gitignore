@@ -4,9 +4,6 @@ db.properties
 application.properties
 *.iml
 
-.gradle
-build
-
 target/
 !**/src/main/**/target/
 !**/src/test/**/target/
