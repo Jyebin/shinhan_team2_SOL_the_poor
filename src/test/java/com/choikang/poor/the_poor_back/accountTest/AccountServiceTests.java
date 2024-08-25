@@ -94,4 +94,12 @@ public class AccountServiceTests {
         Assertions.assertEquals(transaction.getDescription(), transactionDTO.getDescription());
         Assertions.assertEquals(transaction.getStatus(), transactionDTO.getStatus());
     }
+
+    @Test
+    @DisplayName("깡통 잔액 테스트")
+    public void getCanAmountTest() {
+        int amount = 1700;
+        int testAmount = accountService.getCanAmountByAccountID(1L);
+        Assertions.assertEquals(amount, testAmount);
+    }
 }
