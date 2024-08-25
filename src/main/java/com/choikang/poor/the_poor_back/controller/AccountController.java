@@ -28,4 +28,9 @@ public class AccountController {
     public List<TransactionDTO> getTransactionList(Long accountID) {
         return accountService.getTransactionsByAccountID(accountID);
     }
+
+    @GetMapping("/can/balance")
+    public int getCanAmount(Long accountID) {
+        return accountService.getCanAmountByAccountID(accountID);
+    }
 }
