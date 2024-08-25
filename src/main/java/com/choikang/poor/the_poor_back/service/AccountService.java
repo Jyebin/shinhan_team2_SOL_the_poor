@@ -37,4 +37,9 @@ public class AccountService {
                 .map(TransactionDTO::convertToDTO)
                 .collect(Collectors.toList());
     }
+
+    // Can 잔액 가져와서 보여주기
+    public int getCanAmountByAccountID(Long accountID) {
+        return accountRepository.findCanAmountByAccountID(accountID);
+    }
 }
