@@ -22,7 +22,7 @@ public class AttendancePostsService {
     @Autowired
     private OpenAIService openAIService;
 
-    public AttendancePosts createPost(AttendancePostsDTO postsDTO) {
+    public String createPost(AttendancePostsDTO postsDTO) {
         User user = userRepository.findById(postsDTO.getUserId())
                 .orElseThrow(() -> new RuntimeException("유저를 찾을 수 없습니다."));
 
@@ -31,6 +31,7 @@ public class AttendancePostsService {
         String[] responseArr = openAIService.getResponseMessage(openAIRequestDTO);
 
         int attendanceType = determineAttendanceType(responseArr[0]);
+        String responseContent = responseArr[1];
 
         AttendancePosts attendancePosts = AttendancePosts.builder()
                 .user(user)
@@ -38,7 +39,8 @@ public class AttendancePostsService {
                 .attendanceType(attendanceType)
                 .attendanceContent(postsDTO.getContent())
                 .build();
-        return attendancePostsRepository.save(attendancePosts);
+        attendancePostsRepository.save(attendancePosts);
+        return responseContent;
     }
 
     private OpenAIRequestDTO createOpenAIRequest(String content) {
