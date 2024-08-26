@@ -73,10 +73,10 @@ public class AccountServiceTests {
         TransactionDTO transaction = TransactionDTO.builder()
                 .date("2024-08-12")
                 .time("11:35:48")
-                .balance(99912000)
-                .amount(100000)
-                .description("하소영")
-                .status(true)
+                .balance(100000800)
+                .amount(800)
+                .description("깡통")
+                .status(false)
                 .build();
 
         // When: 계좌 정보 조회
