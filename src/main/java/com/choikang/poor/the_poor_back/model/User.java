@@ -4,22 +4,25 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
+@Getter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
 @ToString
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int userID;
+    private Long userID;
 
+    @Column(length = 20, nullable = false)
     private String userName;
+
+    @Column(length = 30, nullable = false)
     private String userEmail;
+
+    @Column
     private int userAttendanceCnt;
 
-    // 출석 횟수 증가 메서드
-    public void incrementAttendance() {
-        this.userAttendanceCnt++;
-    }
+    @Column(nullable = false)
+    private boolean userHasCan;
 }
