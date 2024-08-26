@@ -18,10 +18,10 @@ public class AttendancePostsController {
     private AttendancePostsService attendancePostsService;
 
     @PostMapping("/create")
-    public ResponseEntity<AttendancePosts> createPost(@RequestBody AttendancePostsDTO attendancePostsDTO) {
+    public ResponseEntity<String> createPost(@RequestBody AttendancePostsDTO attendancePostsDTO) {
         try{
-            AttendancePosts attendancePosts = attendancePostsService.createPost(attendancePostsDTO);
-            return new ResponseEntity<>(attendancePosts, HttpStatus.CREATED);
+            String responseContent = attendancePostsService.createPost(attendancePostsDTO);
+            return new ResponseEntity<>(responseContent, HttpStatus.CREATED);
         }catch (RuntimeException e){
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
