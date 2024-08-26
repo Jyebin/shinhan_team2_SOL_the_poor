@@ -1,7 +1,9 @@
 package com.choikang.poor.the_poor_back.accountTest;
 
 import com.choikang.poor.the_poor_back.dto.AccountDTO;
+import com.choikang.poor.the_poor_back.dto.TransactionDTO;
 import com.choikang.poor.the_poor_back.model.Account;
+import com.choikang.poor.the_poor_back.model.Transaction;
 import com.choikang.poor.the_poor_back.model.User;
 import com.choikang.poor.the_poor_back.repository.AccountRepository;
 import com.choikang.poor.the_poor_back.service.AccountService;
@@ -50,15 +52,54 @@ public class AccountServiceTests {
         Assertions.assertEquals(2, accounts.size());
 
         AccountDTO accountDTO1 = accounts.get(0);
-        Assertions.assertEquals("110-576-040419", accountDTO1.getAccountNumber());
-        Assertions.assertEquals("쏠편한 입출금통장(저축예금)", accountDTO1.getAccountName());
-        Assertions.assertEquals(100000000, accountDTO1.getAccountBalance());
-        Assertions.assertTrue(accountDTO1.getAccountHasCan());
+        Assertions.assertEquals("110-576-040419", accountDTO1.getNumber());
+        Assertions.assertEquals("쏠편한 입출금통장(저축예금)", accountDTO1.getName());
+        Assertions.assertEquals(100000000, accountDTO1.getBalance());
+        Assertions.assertTrue(accountDTO1.getHasCan());
 
         AccountDTO accountDTO2 = accounts.get(1);
-        Assertions.assertEquals("110-233-298374", accountDTO2.getAccountNumber());
-        Assertions.assertEquals("신한 슈퍼SOL 통장", accountDTO2.getAccountName());
-        Assertions.assertEquals(100000, accountDTO2.getAccountBalance());
-        Assertions.assertFalse(accountDTO2.getAccountHasCan());
+        Assertions.assertEquals("110-233-298374", accountDTO2.getNumber());
+        Assertions.assertEquals("신한 슈퍼SOL 통장", accountDTO2.getName());
+        Assertions.assertEquals(100000, accountDTO2.getBalance());
+        Assertions.assertFalse(accountDTO2.getHasCan());
+    }
+
+    @Test
+    @DisplayName("accountID로 거래내역 찾기")
+    public void testGetTransactionsByAccountID() {
+        // Given: 테스트를 위한 데이터 준비
+        Account account = Account.builder().accountID(1L).build();
+
+        TransactionDTO transaction = TransactionDTO.builder()
+                .date("2024-08-12")
+                .time("11:35:48")
+                .balance(99912000)
+                .amount(100000)
+                .description("하소영")
+                .status(true)
+                .build();
+
+        // When: 계좌 정보 조회
+        List<TransactionDTO> transactions = accountService.getTransactionsByAccountID(account.getAccountID());
+
+        // Then: 계좌 정보 검증
+        Assertions.assertNotNull(transactions);
+        Assertions.assertEquals(5, transactions.size());
+
+        TransactionDTO transactionDTO = transactions.get(0);
+        Assertions.assertEquals(transaction.getDate(), transactionDTO.getDate());
+        Assertions.assertEquals(transaction.getTime(), transactionDTO.getTime());
+        Assertions.assertEquals(transaction.getBalance(), transactionDTO.getBalance());
+        Assertions.assertEquals(transaction.getAmount(), transactionDTO.getAmount());
+        Assertions.assertEquals(transaction.getDescription(), transactionDTO.getDescription());
+        Assertions.assertEquals(transaction.getStatus(), transactionDTO.getStatus());
+    }
+
+    @Test
+    @DisplayName("깡통 잔액 테스트")
+    public void getCanAmountTest() {
+        int amount = 1700;
+        int testAmount = accountService.getCanAmountByAccountID(1L);
+        Assertions.assertEquals(amount, testAmount);
     }
 }
