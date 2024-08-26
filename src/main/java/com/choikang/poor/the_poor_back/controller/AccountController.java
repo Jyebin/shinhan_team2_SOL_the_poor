@@ -5,12 +5,11 @@ import com.choikang.poor.the_poor_back.dto.TransactionDTO;
 import com.choikang.poor.the_poor_back.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @CrossOrigin(origins = {"http://localhost:3000/","http://localhost/"})
 @RestController
@@ -20,17 +19,25 @@ public class AccountController {
     AccountService accountService;
 
     @GetMapping("/list")
-    public List<AccountDTO> getAccountList(Long userID) {
+    public List<AccountDTO> getAccountList(@RequestParam Long userID) {
         return accountService.getAccountsByUserID(userID);
     }
 
     @GetMapping("/transaction/list")
-    public List<TransactionDTO> getTransactionList(Long accountID) {
+    public List<TransactionDTO> getTransactionList(@RequestParam Long accountID) {
         return accountService.getTransactionsByAccountID(accountID);
     }
 
     @GetMapping("/can/balance")
-    public int getCanAmount(Long accountID) {
+    public int getCanAmount(@RequestParam Long accountID) {
         return accountService.getCanAmountByAccountID(accountID);
+    }
+
+    @PostMapping("/can/manage")
+    public Map<String, String> manageCan(@RequestParam Long accountID, @RequestParam boolean isTerminated) {
+        Map<String, String> response = new HashMap<>();
+        response.put("redirectUrl", accountService.manageCan(accountID, isTerminated));
+
+        return response;
     }
 }
