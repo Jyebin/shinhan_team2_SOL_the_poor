@@ -4,6 +4,7 @@ import com.choikang.poor.the_poor_back.model.User;
 import com.choikang.poor.the_poor_back.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Optional;
 
