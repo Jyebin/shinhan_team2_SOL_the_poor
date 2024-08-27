@@ -45,7 +45,7 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
         // 사용자 정보를 바탕으로 User 엔티티 저장 또는 업데이트
         User user = saveOrUpdateUser(kakaoUserDTO);
 
-        // JWT 토큰 생성
+        // user id를 통해서 JWT 토큰 생성
         return jwtUtil.generateToken(String.valueOf(user.getUserID()));
     }
 

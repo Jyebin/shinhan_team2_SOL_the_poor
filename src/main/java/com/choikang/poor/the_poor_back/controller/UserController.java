@@ -12,7 +12,7 @@ public class UserController {
     UserService userService;
 
     @GetMapping("/hasCan")
-    public Boolean getAccountHasCan(Long userID) {
+    public Boolean getAccountHasCan(@RequestParam("userID") Long userID) {
         return userService.findUserHasCanByUserID(userID);
     }
 }

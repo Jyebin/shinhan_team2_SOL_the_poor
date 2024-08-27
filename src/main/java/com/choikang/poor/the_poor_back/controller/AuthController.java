@@ -1,6 +1,8 @@
 package com.choikang.poor.the_poor_back.controller;
 
 import com.choikang.poor.the_poor_back.service.OAuth2UserService;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,15 +17,26 @@ import org.springframework.web.util.UriComponentsBuilder;
 public class AuthController {
     private final OAuth2UserService kakaoAuthService;
 
-    // 로그인 하기 누를 시 실행.
     @GetMapping("/oauth2/kakao")
-    public ResponseEntity<String> kakaoCallback(@RequestParam("code") String code) throws Exception {
+    public ResponseEntity<String> kakaoCallback(@RequestParam("code") String code, HttpServletResponse response) throws Exception {
         String jwtToken = kakaoAuthService.kakaoLogin(code);
+        System.out.println(jwtToken);
 
-        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUriString("http://localhost:3000")
+        // JWT를 쿠키에 저장
+        Cookie cookie = new Cookie("token",  jwtToken);
+        cookie.setHttpOnly(true);
+        cookie.setPath("/");
+        response.addCookie(cookie);
+
+        // JWT를 URL 파라미터로 전달하면서 리다이렉트
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUriString("http://localhost:3000/login-success")
                 .queryParam("token", jwtToken);
-        return ResponseEntity.status(HttpStatus.FOUND).header("Location", uriBuilder.toUriString()).build();
+
+        return ResponseEntity.status(HttpStatus.FOUND)
+                .header("Location", uriBuilder.toUriString())
+                .build();
     }
+
 
     @GetMapping("/logout")
     public void logout(){
