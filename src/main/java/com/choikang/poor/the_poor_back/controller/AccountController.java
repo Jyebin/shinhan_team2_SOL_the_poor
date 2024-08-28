@@ -19,17 +19,17 @@ public class AccountController {
     AccountService accountService;
 
     @GetMapping("/list")
-    public List<AccountDTO> getAccountList(@RequestParam Long userID) {
+    public List<AccountDTO> getAccountList(@RequestParam("userID") Long userID) {
         return accountService.getAccountsByUserID(userID);
     }
 
     @GetMapping("/transaction/list")
-    public List<TransactionDTO> getTransactionList(@RequestParam Long accountID) {
+    public List<TransactionDTO> getTransactionList(@RequestParam("accountID") Long accountID) {
         return accountService.getTransactionsByAccountID(accountID);
     }
 
     @GetMapping("/can/balance")
-    public int getCanAmount(@RequestParam Long accountID) {
+    public int getCanAmount(@RequestParam("accountID") Long accountID) {
         return accountService.getCanAmountByAccountID(accountID);
     }
 
