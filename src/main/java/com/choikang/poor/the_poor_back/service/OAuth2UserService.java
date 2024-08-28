@@ -7,6 +7,7 @@ import com.choikang.poor.the_poor_back.security.util.JWTUtil;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
@@ -157,6 +158,17 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
                     .build();
             return userRepository.save(newUser);
         }
+    }
+
+    // 쿠키로 부터 jwt 토큰 값 가져오기
+    public String getJWTFromCookies(HttpServletRequest request){
+        String token = null;
+        for(Cookie cookie : request.getCookies()){
+            if(cookie.getName().equals("token")){
+                token = cookie.getValue();
+            }
+        }
+        return token;
     }
 
     // 토큰으로 부터 user 정보 가져오기
