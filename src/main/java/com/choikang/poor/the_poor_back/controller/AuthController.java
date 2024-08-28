@@ -45,14 +45,7 @@ public class AuthController {
 
         if(token != null){
             oAuth2UserService.kakaoLogout(token);
-
-            // 쿠키 삭제
-            Cookie cookie = new Cookie("token", null);
-            cookie.setPath("/");  // request에서 ContextPath 가져오기
-            cookie.setHttpOnly(true);
-            cookie.setMaxAge(0);  // 즉시 만료
-            cookie.setValue(null);  // 명시적으로 값 null 설정
-            response.addCookie(cookie);
+            response.addCookie(oAuth2UserService.deleteJWTFromCookie());
 
         }
         return ResponseEntity.ok().build();

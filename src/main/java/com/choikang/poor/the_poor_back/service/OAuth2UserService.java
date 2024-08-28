@@ -171,6 +171,16 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
         return token;
     }
 
+    // 쿠키 삭제
+    public Cookie deleteJWTFromCookie(){
+        Cookie cookie = new Cookie("token", null);
+        cookie.setPath("/");  // request에서 ContextPath 가져오기
+        cookie.setHttpOnly(true);
+        cookie.setMaxAge(0);  // 즉시 만료
+        cookie.setValue(null);  // 명시적으로 값 null 설정
+        return cookie;
+    }
+
     // 토큰으로 부터 user 정보 가져오기
     public String getUserInfo(String token) throws Exception {
         String userInfo = jwtUtil.getUserInfoFromToken(token);
