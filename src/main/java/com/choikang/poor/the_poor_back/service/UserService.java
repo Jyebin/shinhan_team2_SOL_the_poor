@@ -18,4 +18,10 @@ public class UserService {
         User user = result.get();
         return user.isUserHasCan();
     }
+
+    public int findUserAttendanceCtnByUserID(Long userID) {
+        Optional<User> result = userRepository.findById(userID);
+        User user = result.get();
+        return user.getUserAttendanceCnt();
+    }
 }
