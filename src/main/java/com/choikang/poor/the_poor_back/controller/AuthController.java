@@ -2,11 +2,12 @@ package com.choikang.poor.the_poor_back.controller;
 
 import com.choikang.poor.the_poor_back.service.OAuth2UserService;
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 
@@ -39,8 +40,30 @@ public class AuthController {
 
 
     @GetMapping("/logout")
-    public void logout(){
+    public ResponseEntity<Object> logout(HttpServletRequest request, HttpServletResponse response) throws Exception{
+        String accessToken = null;
+        for(Cookie cookie : request.getCookies()){
+            if(cookie.getName().equals("token")){
+                accessToken = cookie.getValue();
+            }
+        }
+        System.out.println("이부분 실행 되나/?");
+        System.out.println(accessToken);
 
+        if(accessToken != null){
+            kakaoAuthService.kakaoLogout(accessToken);
+
+            // 쿠키 삭제
+            Cookie cookie = new Cookie("token", null);
+            cookie.setPath(request.getContextPath());  // request에서 ContextPath 가져오기
+            cookie.setHttpOnly(true);
+            cookie.setMaxAge(0);  // 즉시 만료
+            cookie.setValue(null);  // 명시적으로 값 null 설정
+            response.addCookie(cookie);
+
+        }
+        return ResponseEntity.ok().build();
     }
+
 
 }
