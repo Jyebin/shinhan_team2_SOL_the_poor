@@ -6,6 +6,7 @@ import com.choikang.poor.the_poor_back.repository.UserRepository;
 import com.choikang.poor.the_poor_back.security.util.JWTUtil;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.Cookie;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
@@ -172,13 +173,13 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
     }
 
     // 토큰으로부터 user id 가져오기
-    public Long getUserID(String userInfo) throws Exception {
-        return Long.parseLong(getUserInfo(userInfo).split(":")[0]);
+    public Long getUserID(String token) throws Exception {
+        return Long.parseLong(getUserInfo(token).split(":")[0]);
     }
 
     // 토큰으로부터 user access token 가져오기
-    public String getUserAccessToken(String userInfo) throws Exception{
-        return getUserInfo(userInfo).split(":")[1];
+    public String getUserAccessToken(String token) throws Exception{
+        return getUserInfo(token).split(":")[1];
     }
 
 
@@ -189,7 +190,7 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
 
         // 요청 헤더 설정
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer " + getUserID(token));
+        headers.set("Authorization", "Bearer " + getUserAccessToken(token));
 
         HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
 
@@ -199,5 +200,6 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
             throw new RuntimeException("Failed logout from kakao");
         }
     }
+
 }
 

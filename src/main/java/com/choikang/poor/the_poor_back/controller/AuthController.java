@@ -5,9 +5,9 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 
@@ -52,7 +52,7 @@ public class AuthController {
 
             // 쿠키 삭제
             Cookie cookie = new Cookie("token", null);
-            cookie.setPath(request.getContextPath());  // request에서 ContextPath 가져오기
+            cookie.setPath("/");  // request에서 ContextPath 가져오기
             cookie.setHttpOnly(true);
             cookie.setMaxAge(0);  // 즉시 만료
             cookie.setValue(null);  // 명시적으로 값 null 설정
