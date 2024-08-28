@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin(origins = {"http://localhost:3000/","http://localhost/"})
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/api/user")
 public class UserController {
     @Autowired
     UserService userService;
@@ -20,28 +20,18 @@ public class UserController {
     @Autowired
     OAuth2UserService authService;
 
+    // 유저의 깡통 여부 찾아서 앞단으로 반환
     @GetMapping("/hasCan")
     public ResponseEntity<?> getAccountHasCan(HttpServletRequest request) {
-        String token = null;
-        for(Cookie cookie : request.getCookies()){ // 쿠키에서 토큰 값 찾기
-            if(cookie.getName().equals("token")){
-                token = cookie.getValue();
-            }
-        }
-        if (token == null) { // 토큰 값이 없으면
-            return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
-                    .body("토큰이 존재하지 않습니다.");
-        }
-
-        try { // 토큰을 통해 userID, hasCan 값 찾기
+        String token = authService.getJWTFromCookies(request);
+        if (token == null) // 토큰 값이 없으면 BAD_REQUEST 반환
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("토큰이 존재하지 않습니다.");
+        try { // userID, hasCan 값 찾는 Service 호출
             Long userID = authService.getUserID(token);
             Boolean userHasCan = userService.findUserHasCanByUserID(userID);
             return ResponseEntity.ok(userHasCan);
-        } catch(Exception e) {
-            return ResponseEntity // 실패 시
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Internal Server Error");
+        } catch(Exception e) { // 실패 시 INTERNAL SERVER ERROR 반환
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("INTERNAL SERVER ERROR");
         }
     }
 }
