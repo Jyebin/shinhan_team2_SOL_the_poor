@@ -182,24 +182,18 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
     }
 
 
+    // 카카오 로그아웃 api get 요청
     public void kakaoLogout(String token) throws Exception {
         RestTemplate restTemplate = new RestTemplate();
         String logoutUrl = "https://kapi.kakao.com/v1/user/logout";
 
         // 요청 헤더 설정
         HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-        headers.add("charset", "utf-8");
         headers.set("Authorization", "Bearer " + getUserID(token));
 
         HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
 
-        ResponseEntity<String> response = restTemplate.exchange(
-                logoutUrl,
-                HttpMethod.GET,
-                new org.springframework.http.HttpEntity<>(requestEntity),
-                String.class
-        );
+        ResponseEntity<Map> response = restTemplate.exchange(logoutUrl, HttpMethod.GET, requestEntity, Map.class);
 
         if(!response.getStatusCode().is2xxSuccessful()){
             throw new RuntimeException("Failed logout from kakao");
