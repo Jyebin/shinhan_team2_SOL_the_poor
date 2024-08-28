@@ -16,11 +16,11 @@ import org.springframework.web.util.UriComponentsBuilder;
 @RequestMapping("/api")
 @RequiredArgsConstructor
 public class AuthController {
-    private final OAuth2UserService kakaoAuthService;
+    private final OAuth2UserService oAuth2UserService;
 
     @GetMapping("/oauth2/kakao")
     public ResponseEntity<String> kakaoCallback(@RequestParam("code") String code, HttpServletResponse response) throws Exception {
-        String jwtToken = kakaoAuthService.kakaoLogin(code);
+        String jwtToken = oAuth2UserService.kakaoLogin(code);
         System.out.println(jwtToken);
 
         // JWT를 쿠키에 저장
@@ -41,14 +41,10 @@ public class AuthController {
 
     @GetMapping("/logout")
     public ResponseEntity<Object> logout(HttpServletRequest request, HttpServletResponse response) throws Exception{
-        String token = null;
-        for(Cookie cookie : request.getCookies()){
-            if(cookie.getName().equals("token")){
-                token = cookie.getValue();
-            }
-        }
+        String token = oAuth2UserService.getJWTFromCookies(request);
+
         if(token != null){
-            kakaoAuthService.kakaoLogout(token);
+            oAuth2UserService.kakaoLogout(token);
 
             // 쿠키 삭제
             Cookie cookie = new Cookie("token", null);
