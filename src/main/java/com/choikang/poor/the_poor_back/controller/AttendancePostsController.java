@@ -4,6 +4,7 @@ import com.choikang.poor.the_poor_back.dto.AttendancePostResponseDTO;
 import com.choikang.poor.the_poor_back.dto.AttendancePostsDTO;
 import com.choikang.poor.the_poor_back.service.AttendancePostsService;
 import com.choikang.poor.the_poor_back.service.OAuth2UserService;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,8 +24,18 @@ public class AttendancePostsController {
     private OAuth2UserService oAuth2UserService;
 
     @PostMapping("/create")
-    public ResponseEntity<String> createPost(@RequestBody AttendancePostsDTO attendancePostsDTO) {
+    public ResponseEntity<String> createPost(HttpServletRequest request, @RequestBody AttendancePostsDTO attendancePostsDTO)
+            throws Exception {
+        String token = null;
+        for(Cookie cookie : request.getCookies()){
+            if(cookie.getName().equals("token")){
+                token = cookie.getValue();
+            }
+        }
+
         try{
+            Long userId = oAuth2UserService.getUserID(token);
+            attendancePostsDTO.setUserId(userId);
             String responseContent = attendancePostsService.createPost(attendancePostsDTO);
             return new ResponseEntity<>(responseContent, HttpStatus.CREATED);
         }catch (RuntimeException e){
@@ -32,7 +43,8 @@ public class AttendancePostsController {
         }
     }
 
-    @GetMapping("/viewAllAttendance")
+
+    @GetMapping("/view")
     public ResponseEntity<?> viewAttendance(HttpServletRequest request){
         try {
             String token = oAuth2UserService.getJWTFromCookies(request);

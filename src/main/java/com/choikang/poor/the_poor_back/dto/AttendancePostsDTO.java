@@ -11,6 +11,6 @@ import lombok.Setter;
 @NoArgsConstructor
 public class AttendancePostsDTO {
     private Long userId;
-    private String content;
+    private String message;
 
 }

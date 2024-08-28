@@ -31,7 +31,7 @@ public class AttendancePostsService {
         User user = userRepository.findById(postsDTO.getUserId())
                 .orElseThrow(() -> new RuntimeException("유저를 찾을 수 없습니다."));
 
-        OpenAIRequestDTO openAIRequestDTO = createOpenAIRequest(postsDTO.getContent());
+        OpenAIRequestDTO openAIRequestDTO = createOpenAIRequest(postsDTO.getMessage());
 
         String[] responseArr = openAIService.getResponseMessage(openAIRequestDTO);
 
@@ -42,7 +42,7 @@ public class AttendancePostsService {
                 .user(user)
                 .attendanceDate(LocalDateTime.now())
                 .attendanceType(attendanceType)
-                .attendanceContent(postsDTO.getContent())
+                .attendanceContent(postsDTO.getMessage())
                 .build();
         attendancePostsRepository.save(attendancePosts);
         return responseContent;
@@ -88,7 +88,7 @@ public class AttendancePostsService {
                .stream()
                         .map(post -> {
                             AttendancePostResponseDTO dto = new AttendancePostResponseDTO();
-                            dto.setDate(post.getAttendanceDate());
+                            dto.setDate(post.getAttendanceDate().toString().substring(0, 10));
                             dto.setContent(post.getAttendanceContent());
                             dto.setType(switchPostTypeFromNumToWord(post.getAttendanceType()));
                             return dto;

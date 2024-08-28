@@ -13,6 +13,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class AttendancePostResponseDTO {
     private String content;
-    private LocalDateTime date;
+    private String date;
     private String type;
 }
