@@ -42,4 +42,9 @@ public class AccountService {
     public int getCanAmountByAccountID(Long accountID) {
         return accountRepository.findCanAmountByAccountID(accountID);
     }
+
+    public void registerCan(Long accountID, Long userID) {
+        accountRepository.updateAccountHasCan(accountID);
+        accountRepository.updateUserHasCan(userID);
+    }
 }

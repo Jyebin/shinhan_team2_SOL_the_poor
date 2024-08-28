@@ -5,14 +5,11 @@ import com.choikang.poor.the_poor_back.dto.TransactionDTO;
 import com.choikang.poor.the_poor_back.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@CrossOrigin(origins = {"http://localhost:3000/","http://localhost/"})
+@CrossOrigin(origins = {"http://localhost:3000/","http://192.168.0.63:3000/"})
 @RestController
 @RequestMapping("/account")
 public class AccountController {
@@ -32,5 +29,11 @@ public class AccountController {
     @GetMapping("/can/balance")
     public int getCanAmount(Long accountID) {
         return accountService.getCanAmountByAccountID(accountID);
+    }
+
+    @PostMapping("/register")
+    public void registerCan(@RequestParam Long accountID, @RequestParam Long userID) {
+        accountService.registerCan(accountID, userID);
+
     }
 }

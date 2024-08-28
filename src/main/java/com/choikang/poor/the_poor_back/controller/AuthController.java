@@ -11,7 +11,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.io.IOException;
 
 
-@CrossOrigin(origins = {"http://localhost:3000/","http://localhost/"}) // 리액트에서 호출할 것이므로 리엑트의 url과 함께 작성
+@CrossOrigin(origins = {"http://localhost:3000/","http://192.168.0.63:3000/"}) // 리액트에서 호출할 것이므로 리엑트의 url과 함께 작성
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
@@ -23,7 +23,7 @@ public class AuthController {
     public ResponseEntity<String> kakaoCallback(@RequestParam("code") String code) throws Exception {
         String jwtToken = kakaoAuthService.kakaoLogin(code);
 
-        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUriString("http://localhost:3000")
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUriString("http://192.168.0.63:3000")
                 .queryParam("token", jwtToken);
         return ResponseEntity.status(HttpStatus.FOUND).header("Location", uriBuilder.toUriString()).build();
     }
