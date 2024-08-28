@@ -38,11 +38,16 @@ public class OpenAIService {
             OpenAIResponseDTO response = responseEntity.getBody();
             if (response != null && response.getChoices() != null && !response.getChoices().isEmpty()) {
                 String responseStr = response.getChoices().get(0).getMessage().getContent();
-                return responseStr.split(",", 2);
+
+                responseStr = responseStr.replaceAll("[\\[\\]]", "").trim();
+                String[] result = responseStr.split(",", 2);
+
+                result[0] = result[0].trim();
+                result[1] = result[1].trim();
+                return result;
             }
             return new String[]{"판단 안됨", null};
         } catch (HttpClientErrorException e) {
-            System.err.println("응답 바디: " + e.getResponseBodyAsString());
             throw e;
         }
     }

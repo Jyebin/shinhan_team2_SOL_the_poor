@@ -27,6 +27,18 @@ public class JWTUtil {
                 .compact();
     }
 
+    // jwt로부터 user 정보 가져오기
+    public String getUserInfoFromToken(String tokenStr) throws Exception{
+        DefaultJws defaultJws = (DefaultJws) Jwts.parser()
+                .setSigningKey(secretKey.getBytes("UTF-8")).build().parseClaimsJws(tokenStr);
+
+        // 클레임을 추출하여 안에 저장된 값 추출
+        DefaultClaims claims = (DefaultClaims) defaultJws.getBody();
+        String subject = claims.getSubject();
+
+        return subject;
+    }
+
     // 토큰 검증 및 값 추출
     public int validateAndExtract(String tokenStr) throws Exception {
         int contentValue = 0;
