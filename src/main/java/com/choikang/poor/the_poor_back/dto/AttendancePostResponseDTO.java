@@ -5,14 +5,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class AttendancePostRequestDTO {
-    private Long userId;
+public class AttendancePostResponseDTO {
     private String content;
-    private Date date;
+    private LocalDateTime date;
+    private String type;
 }

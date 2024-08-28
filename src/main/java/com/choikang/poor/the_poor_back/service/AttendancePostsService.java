@@ -1,6 +1,6 @@
 package com.choikang.poor.the_poor_back.service;
 
-import com.choikang.poor.the_poor_back.dto.AttendancePostRequestDTO;
+import com.choikang.poor.the_poor_back.dto.AttendancePostResponseDTO;
 import com.choikang.poor.the_poor_back.dto.AttendancePostsDTO;
 import com.choikang.poor.the_poor_back.dto.OpenAIRequestDTO;
 import com.choikang.poor.the_poor_back.model.AttendancePosts;
@@ -83,19 +83,25 @@ public class AttendancePostsService {
         return answer;
     }
 
-    public Optional<AttendancePosts> getAttendancePostList (Long userID){
-        List<AttendancePostsDTO> posts = AttendancePostsRepository.findByUserID(userID)
-                .map(post -> post.stream()
-                        .map(postList -> {
-                            AttendancePostRequestDTO dto = new AttendancePostRequestDTO();
-                            dto.setDate(post.);
-                            dto.setContent(post.);
-                            dto.setUserId(post.);
+    public Optional<List<AttendancePostResponseDTO>> getAttendancePostList (Long userID){
+        List<AttendancePostResponseDTO> posts = attendancePostsRepository.findByUserUserID(userID)
+               .stream()
+                        .map(post -> {
+                            AttendancePostResponseDTO dto = new AttendancePostResponseDTO();
+                            dto.setDate(post.getAttendanceDate());
+                            dto.setContent(post.getAttendanceContent());
+                            dto.setType(switchPostTypeFromNumToWord(post.getAttendanceType()));
                             return dto;
                         })
-                        .collect(Collectors.toList()))
-                .orElse(null); // 결과가 없을 경우 null 반환
+                        .collect(Collectors.toList());
 
         return Optional.ofNullable(posts);
+    }
+
+    public String switchPostTypeFromNumToWord(int typeNum){
+        if(typeNum == 1){
+            return "overspending";
+        }
+        return "saving";
     }
 }

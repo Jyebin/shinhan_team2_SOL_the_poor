@@ -56,5 +56,6 @@ public class AccountService {
 
     private void terminateCanByAccountID(Long accountID) {
         // 깡통 해지 관련 비즈니스 로직
+
     }
 }
