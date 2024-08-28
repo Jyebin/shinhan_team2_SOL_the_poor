@@ -38,15 +38,17 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
     @Value("${spring.security.oauth2.client.registration.kakao.client-secret}")
     private String kakaoClientSecret;
 
+    // 카카오 로그인
     public String kakaoLogin(String code) throws Exception {
         String accessToken = getKakaoAccessToken(code);
+        System.out.println(accessToken);
         KakaoUserDTO kakaoUserDTO = getKakaoUserInfo(accessToken);
 
         // 사용자 정보를 바탕으로 User 엔티티 저장 또는 업데이트
         User user = saveOrUpdateUser(kakaoUserDTO);
 
-        // JWT 토큰 생성
-        return jwtUtil.generateToken(String.valueOf(user.getUserID()));
+        // user id를 통해서 JWT 토큰 생성
+        return jwtUtil.generateToken(user.getUserID()+":"+accessToken);
     }
 
     // 사용자 인증 수단 (액세스 토큰)가져옴
@@ -113,6 +115,7 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
         // HttpHeaders 설정
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + accessToken);
+
         // 요청 헤더를 포함한 HttpEntity 생성
         HttpEntity<String> entity = new HttpEntity<>(headers);
         try {
@@ -152,6 +155,48 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
                     .userEmail(kakaoUserDTO.getEmail())
                     .build();
             return userRepository.save(newUser);
+        }
+    }
+
+    // 토큰으로 부터 user 정보 가져오기
+    public String getUserInfo(String token) throws Exception {
+        String userInfo = jwtUtil.getUserInfoFromToken(token);
+
+        Optional<User> userOptional = userRepository.findById(Long.valueOf(userInfo.split(":")[0]));
+
+        if (userOptional.isPresent()) {
+            return userInfo;
+        } else {
+            throw new RuntimeException("유효하지 않은 사용자 정보입니다.");
+        }
+    }
+
+    // 토큰으로부터 user id 가져오기
+    public Long getUserID(String userInfo) throws Exception {
+        return Long.parseLong(getUserInfo(userInfo).split(":")[0]);
+    }
+
+    // 토큰으로부터 user access token 가져오기
+    public String getUserAccessToken(String userInfo) throws Exception{
+        return getUserInfo(userInfo).split(":")[1];
+    }
+
+
+    // 카카오 로그아웃 api get 요청
+    public void kakaoLogout(String token) throws Exception {
+        RestTemplate restTemplate = new RestTemplate();
+        String logoutUrl = "https://kapi.kakao.com/v1/user/logout";
+
+        // 요청 헤더 설정
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + getUserID(token));
+
+        HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
+
+        ResponseEntity<Map> response = restTemplate.exchange(logoutUrl, HttpMethod.GET, requestEntity, Map.class);
+
+        if(!response.getStatusCode().is2xxSuccessful()){
+            throw new RuntimeException("Failed logout from kakao");
         }
     }
 }
