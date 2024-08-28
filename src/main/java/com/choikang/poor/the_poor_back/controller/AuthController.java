@@ -41,17 +41,14 @@ public class AuthController {
 
     @GetMapping("/logout")
     public ResponseEntity<Object> logout(HttpServletRequest request, HttpServletResponse response) throws Exception{
-        String accessToken = null;
+        String token = null;
         for(Cookie cookie : request.getCookies()){
             if(cookie.getName().equals("token")){
-                accessToken = cookie.getValue();
+                token = cookie.getValue();
             }
         }
-        System.out.println("이부분 실행 되나/?");
-        System.out.println(accessToken);
-
-        if(accessToken != null){
-            kakaoAuthService.kakaoLogout(accessToken);
+        if(token != null){
+            kakaoAuthService.kakaoLogout(token);
 
             // 쿠키 삭제
             Cookie cookie = new Cookie("token", null);
