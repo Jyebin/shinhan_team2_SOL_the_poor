@@ -80,12 +80,6 @@ public class JWTUtil {
         return generateToken(subject);
     }
 
-
-    // 해당 토큰의 만료시간을 입력받은 시간으로 변경
-    public void setExpire(int i) {
-        this.expire = i;
-    }
-
     // 토큰 만료 여부 확인
     public boolean isTokenExpired(String token) throws Exception{
         try {

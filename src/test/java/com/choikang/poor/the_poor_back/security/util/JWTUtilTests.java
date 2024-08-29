@@ -29,26 +29,25 @@ public class JWTUtilTests {
         String oldToken = jwtUtil.generateToken(content); // 토큰 생성
         Thread.sleep(1000); // 1초 대기
 
-        // 기존 토큰과 재발급된 토큰이 동일한지 확인
+        // 기존 토큰과 재발급된 토큰이 동일한지 확인 -> 달라야 함
         String newToken = jwtUtil.refreshToken(oldToken);
-        assertEquals(oldToken, newToken);
+        assertNotEquals(oldToken, newToken);
 
         // 재발급 토큰값이 올바른 값을 저장하였는지 확인
         String extractedContent = jwtUtil.getUserInfoFromToken(newToken);
-        assertNotEquals(content, extractedContent);
+        assertEquals(content, extractedContent);
     }
 
     @Test
     void testExperienceToken() throws Exception{
-        JWTUtil shortExpirationJwtUtil = new JWTUtil();
-        // 1분 후 토큰이 만료되도록 설정
-        shortExpirationJwtUtil.setExpire(1);
-
         String content = "testUserTokenValues";
-        String token = shortExpirationJwtUtil.generateToken(content);
+        String token = jwtUtil.generateToken(content);
 
-        // 토큰이 만료되었는지 확인
-        assertFalse(shortExpirationJwtUtil.isTokenExpired(token));
+        // 1분대기
+        Thread.sleep(61000);
+
+        // 토큰이 만료되었는지 확인(토큰이 만료될 시 true 값 return함)
+        assertTrue(jwtUtil.isTokenExpired(token));
 
     }
 }
