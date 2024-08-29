@@ -6,6 +6,8 @@ import com.choikang.poor.the_poor_back.repository.UserRepository;
 import com.choikang.poor.the_poor_back.security.util.JWTUtil;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
@@ -38,15 +40,17 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
     @Value("${spring.security.oauth2.client.registration.kakao.client-secret}")
     private String kakaoClientSecret;
 
+    // 카카오 로그인
     public String kakaoLogin(String code) throws Exception {
         String accessToken = getKakaoAccessToken(code);
+        System.out.println(accessToken);
         KakaoUserDTO kakaoUserDTO = getKakaoUserInfo(accessToken);
 
         // 사용자 정보를 바탕으로 User 엔티티 저장 또는 업데이트
         User user = saveOrUpdateUser(kakaoUserDTO);
 
-        // JWT 토큰 생성
-        return jwtUtil.generateToken(String.valueOf(user.getUserID()));
+        // user id를 통해서 JWT 토큰 생성
+        return jwtUtil.generateToken(user.getUserID()+":"+accessToken);
     }
 
     // 사용자 인증 수단 (액세스 토큰)가져옴
@@ -113,6 +117,7 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
         // HttpHeaders 설정
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + accessToken);
+
         // 요청 헤더를 포함한 HttpEntity 생성
         HttpEntity<String> entity = new HttpEntity<>(headers);
         try {
@@ -154,5 +159,69 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
             return userRepository.save(newUser);
         }
     }
+
+    // 쿠키로 부터 jwt 토큰 값 가져오기
+    public String getJWTFromCookies(HttpServletRequest request){
+        String token = null;
+        for(Cookie cookie : request.getCookies()){
+            if(cookie.getName().equals("token")){
+                token = cookie.getValue();
+            }
+        }
+        return token;
+    }
+
+    // 쿠키 삭제
+    public Cookie deleteJWTFromCookie(){
+        Cookie cookie = new Cookie("token", null);
+        cookie.setPath("/");  // request에서 ContextPath 가져오기
+        cookie.setHttpOnly(true);
+        cookie.setMaxAge(0);  // 즉시 만료
+        cookie.setValue(null);  // 명시적으로 값 null 설정
+        return cookie;
+    }
+
+    // 토큰으로 부터 user 정보 가져오기
+    public String getUserInfo(String token) throws Exception {
+        String userInfo = jwtUtil.getUserInfoFromToken(token);
+
+        Optional<User> userOptional = userRepository.findById(Long.valueOf(userInfo.split(":")[0]));
+
+        if (userOptional.isPresent()) {
+            return userInfo;
+        } else {
+            throw new RuntimeException("유효하지 않은 사용자 정보입니다.");
+        }
+    }
+
+    // 토큰으로부터 user id 가져오기
+    public Long getUserID(String token) throws Exception {
+        return Long.parseLong(getUserInfo(token).split(":")[0]);
+    }
+
+    // 토큰으로부터 user access token 가져오기
+    public String getUserAccessToken(String token) throws Exception{
+        return getUserInfo(token).split(":")[1];
+    }
+
+
+    // 카카오 로그아웃 api get 요청
+    public void kakaoLogout(String token) throws Exception {
+        RestTemplate restTemplate = new RestTemplate();
+        String logoutUrl = "https://kapi.kakao.com/v1/user/logout";
+
+        // 요청 헤더 설정
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + getUserAccessToken(token));
+
+        HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
+
+        ResponseEntity<Map> response = restTemplate.exchange(logoutUrl, HttpMethod.GET, requestEntity, Map.class);
+
+        if(!response.getStatusCode().is2xxSuccessful()){
+            throw new RuntimeException("Failed logout from kakao");
+        }
+    }
+
 }
 

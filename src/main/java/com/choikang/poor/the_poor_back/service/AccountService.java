@@ -45,7 +45,6 @@ public class AccountService {
         return accountRepository.findCanAmountByAccountID(accountID);
     }
 
-
     public Optional<Account> getAccountByID(Long accountID) {
         return accountRepository.findById(accountID);
     }
@@ -73,4 +72,20 @@ public class AccountService {
     }
 
 
+}
+    public String manageCan(Long accountID, boolean isTerminated) {
+        terminateCanByAccountID(accountID); // 깡통 잔액 계좌로 입금
+
+        if (isTerminated) {
+            // 계좌의 hasCan -> false로 변경
+            return "/myAccount"; // 리다이렉트할 URL 반환
+        } else {
+            return ""; // 현재 페이지에 머무르도록 빈 문자열 반환
+        }
+    }
+
+    private void terminateCanByAccountID(Long accountID) {
+        // 깡통 해지 관련 비즈니스 로직
+
+    }
 }
