@@ -51,6 +51,8 @@ public class AccountService {
         Long userID = accountRepository.findUserIDByAccountID(accountID);
         String redirectURL = "";
 
+        System.out.println(state + "!!!!!!!!!!!!!!!!!!!!!");
+
         // state = 'register'
         if ("register".equals(state)) {
             // hasCan = true
@@ -66,6 +68,7 @@ public class AccountService {
                 userRepository.updateUserHasCanById(userID, false);
 
                 redirectURL = "/myAccount";
+                System.out.println("unchecked!!!!!!!!!!!");
             }
             accountRepository.updateBalanceAndResetCanAmount(accountID);
         }
