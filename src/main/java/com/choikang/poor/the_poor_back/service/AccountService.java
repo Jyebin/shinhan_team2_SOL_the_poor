@@ -71,8 +71,6 @@ public class AccountService {
         return false;
     }
 
-
-}
     public String manageCan(Long accountID, boolean isTerminated) {
         terminateCanByAccountID(accountID); // 깡통 잔액 계좌로 입금
 
