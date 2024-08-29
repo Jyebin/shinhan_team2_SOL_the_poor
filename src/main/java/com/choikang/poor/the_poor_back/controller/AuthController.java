@@ -16,11 +16,11 @@ import org.springframework.web.util.UriComponentsBuilder;
 @RequestMapping("/api")
 @RequiredArgsConstructor
 public class AuthController {
-    private final OAuth2UserService kakaoAuthService;
+    private final OAuth2UserService oAuth2UserService;
 
     @GetMapping("/oauth2/kakao")
     public ResponseEntity<String> kakaoCallback(@RequestParam("code") String code, HttpServletResponse response) throws Exception {
-        String jwtToken = kakaoAuthService.kakaoLogin(code);
+        String jwtToken = oAuth2UserService.kakaoLogin(code);
         System.out.println(jwtToken);
 
         // JWT를 쿠키에 저장
@@ -41,22 +41,11 @@ public class AuthController {
 
     @GetMapping("/logout")
     public ResponseEntity<Object> logout(HttpServletRequest request, HttpServletResponse response) throws Exception{
-        String token = null;
-        for(Cookie cookie : request.getCookies()){
-            if(cookie.getName().equals("token")){
-                token = cookie.getValue();
-            }
-        }
-        if(token != null){
-            kakaoAuthService.kakaoLogout(token);
+        String token = oAuth2UserService.getJWTFromCookies(request);
 
-            // 쿠키 삭제
-            Cookie cookie = new Cookie("token", null);
-            cookie.setPath("/");  // request에서 ContextPath 가져오기
-            cookie.setHttpOnly(true);
-            cookie.setMaxAge(0);  // 즉시 만료
-            cookie.setValue(null);  // 명시적으로 값 null 설정
-            response.addCookie(cookie);
+        if(token != null){
+            oAuth2UserService.kakaoLogout(token);
+            response.addCookie(oAuth2UserService.deleteJWTFromCookie());
 
         }
         return ResponseEntity.ok().build();
