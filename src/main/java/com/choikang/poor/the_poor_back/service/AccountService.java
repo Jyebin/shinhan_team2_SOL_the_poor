@@ -9,6 +9,8 @@ import com.choikang.poor.the_poor_back.repository.TransactionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,6 +45,34 @@ public class AccountService {
         return accountRepository.findCanAmountByAccountID(accountID);
     }
 
+    public Optional<Account> getAccountByID(Long accountID) {
+        return accountRepository.findById(accountID);
+    }
+
+
+    private static final Logger logger = LoggerFactory.getLogger(AccountService.class);
+
+    public boolean updateAccountCanInfo(AccountDTO accountDTO) {
+        Optional<Account> accountOptional = accountRepository.findById(accountDTO.getAccountID());
+
+        if (accountOptional.isPresent()) {
+            Account account = accountOptional.get();
+            account.setAccountCanInterestRate(accountDTO.getCanInterestRate());
+            account.setAccountHasCan(true);
+            accountRepository.save(account);
+
+            // 로그 출력
+            logger.info("Account updated: {}", account);
+
+            return true;
+        }
+
+        logger.warn("Account not found for ID: {}", accountDTO.getAccountID());
+        return false;
+    }
+
+
+}
     public String manageCan(Long accountID, boolean isTerminated) {
         terminateCanByAccountID(accountID); // 깡통 잔액 계좌로 입금
 
