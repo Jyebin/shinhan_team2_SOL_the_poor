@@ -6,6 +6,7 @@ import com.choikang.poor.the_poor_back.model.Account;
 import com.choikang.poor.the_poor_back.model.Transaction;
 import com.choikang.poor.the_poor_back.repository.AccountRepository;
 import com.choikang.poor.the_poor_back.repository.TransactionRepository;
+import com.choikang.poor.the_poor_back.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,9 @@ public class AccountService {
 
     @Autowired
     TransactionRepository transactionRepository;
+
+    @Autowired
+    UserRepository userRepository;
 
     public List<AccountDTO> getAccountsByUserID(Long userID) {
         List<Account> accounts = accountRepository.findByUserUserID(userID);
@@ -43,18 +47,28 @@ public class AccountService {
         return accountRepository.findCanAmountByAccountID(accountID);
     }
 
-    public String manageCan(Long accountID, boolean isTerminated) {
-        terminateCanByAccountID(accountID); // 깡통 잔액 계좌로 입금
+    public String manageCan(Long accountID, String state) {
+        Long userID = accountRepository.findUserIDByAccountID(accountID);
+        String redirectURL = "";
 
-        if (isTerminated) {
-            // 계좌의 hasCan -> false로 변경
-            return "/myAccount"; // 리다이렉트할 URL 반환
+        // state = 'register'
+        if ("register".equals(state)) {
+            // hasCan = true
+            accountRepository.updateAccountHasCanByAccountID(accountID, true);
+            userRepository.updateUserHasCanById(userID, true);
+
+            redirectURL = "/";
         } else {
-            return ""; // 현재 페이지에 머무르도록 빈 문자열 반환
-        }
-    }
+            // state = 'terminateChecked'
+            if ("terminateUnChecked".equals(state)) {
+                // hasCan = false
+                accountRepository.updateAccountHasCanByAccountID(accountID, false);
+                userRepository.updateUserHasCanById(userID, false);
 
-    private void terminateCanByAccountID(Long accountID) {
-        // 깡통 해지 관련 비즈니스 로직
+                redirectURL = "/myAccount";
+            }
+            accountRepository.updateBalanceAndResetCanAmount(accountID);
+        }
+        return redirectURL;
     }
 }

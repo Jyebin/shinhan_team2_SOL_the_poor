@@ -29,6 +29,7 @@ public class AccountController {
     @Autowired
     UserService userService;
 
+    // 계좌 리스트 조회
     @GetMapping("/list")
     public ResponseEntity<?> getAccountList(HttpServletRequest request) {
         String token = authService.getJWTFromCookies(request);
@@ -43,11 +44,13 @@ public class AccountController {
         }
     }
 
+    // 거래내역 조회
     @GetMapping("/transaction/list")
     public List<TransactionDTO> getTransactionList(@RequestParam("accountID") Long accountID) {
         return accountService.getTransactionsByAccountID(accountID);
     }
 
+    // 깡통 조회
     @GetMapping("/can/balance")
     public ResponseEntity<? extends Object> getCanAmount(@RequestParam("accountID") Long accountID, HttpServletRequest request) {
         String token = authService.getJWTFromCookies(request);
@@ -71,9 +74,11 @@ public class AccountController {
     }
 
     @PostMapping("/can/manage")
-    public Map<String, String> manageCan(@RequestParam Long accountID, @RequestParam boolean isTerminated) {
+    public Map<String, String> manageCan(@RequestBody Map<String, Object> request) {
+        Long accountID = Long.valueOf(request.get("accountID").toString());
+        String status = (String) request.get("status");
         Map<String, String> response = new HashMap<>();
-        response.put("redirectUrl", accountService.manageCan(accountID, isTerminated));
+        response.put("redirectUrl", accountService.manageCan(accountID, status));
 
         return response;
     }
