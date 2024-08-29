@@ -2,7 +2,6 @@ package com.choikang.poor.the_poor_back.dto;
 
 import com.choikang.poor.the_poor_back.model.Account;
 import lombok.*;
-
 @Data
 @ToString
 @Builder
@@ -14,6 +13,7 @@ public class AccountDTO {
     private String name;
     private int balance;
     private Boolean hasCan;
+    private double canInterestRate;
 
     public static AccountDTO convertToDTO(Account account) {
         return AccountDTO.builder()
@@ -21,7 +21,8 @@ public class AccountDTO {
                 .number(account.getAccountNumber())
                 .name(account.getAccountName())
                 .balance(account.getAccountBalance())
-                .hasCan(account.isAccountHasCan())
+                .hasCan(account.isAccountHasCan())  // getHasCan -> isAccountHasCan로 수정
+                .canInterestRate(account.getAccountCanInterestRate())  // 추가
                 .build();
     }
 }
