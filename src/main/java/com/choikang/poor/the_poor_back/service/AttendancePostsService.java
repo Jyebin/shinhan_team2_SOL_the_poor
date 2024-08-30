@@ -34,13 +34,16 @@ public class AttendancePostsService {
         int attendanceType = determineAttendanceType(responseArr[0]);
         String responseContent = responseArr[1];
 
-        AttendancePosts attendancePosts = AttendancePosts.builder()
-                .user(user)
-                .attendanceDate(LocalDateTime.now())
-                .attendanceType(attendanceType)
-                .attendanceContent(postsDTO.getMessage())
-                .build();
-        attendancePostsRepository.save(attendancePosts);
+        if(responseType != "'판단 안됨'"){
+            AttendancePosts attendancePosts = AttendancePosts.builder()
+                    .user(user)
+                    .attendanceDate(LocalDateTime.now())
+                    .attendanceType(attendanceType)
+                    .attendanceContent(postsDTO.getMessage())
+                    .build();
+            attendancePostsRepository.save(attendancePosts);
+        }
+
         String[] responses = new String[2];
         responses[0] = responseType;
         responses[1] = responseContent;
