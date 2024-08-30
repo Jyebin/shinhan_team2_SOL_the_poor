@@ -4,15 +4,16 @@ import com.choikang.poor.the_poor_back.dto.AccountDTO;
 import com.choikang.poor.the_poor_back.dto.TransactionDTO;
 import com.choikang.poor.the_poor_back.model.Account;
 import com.choikang.poor.the_poor_back.model.Transaction;
+import com.choikang.poor.the_poor_back.model.User;
 import com.choikang.poor.the_poor_back.repository.AccountRepository;
 import com.choikang.poor.the_poor_back.repository.TransactionRepository;
+import com.choikang.poor.the_poor_back.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -22,6 +23,9 @@ import java.util.stream.Collectors;
 public class AccountService {
     @Autowired
     AccountRepository accountRepository;
+
+    @Autowired
+    private UserRepository userRepository; // UserRepository 추가
 
     @Autowired
     TransactionRepository transactionRepository;
@@ -52,23 +56,20 @@ public class AccountService {
 
     private static final Logger logger = LoggerFactory.getLogger(AccountService.class);
 
-    public boolean updateAccountCanInfo(AccountDTO accountDTO) {
-        Optional<Account> accountOptional = accountRepository.findById(accountDTO.getAccountID());
-
+    public void updateAccountAndUserCanInfo(Long accountID, double canInterestRate) {
+        // Account 정보 업데이트
+        Optional<Account> accountOptional = accountRepository.findById(accountID);
         if (accountOptional.isPresent()) {
             Account account = accountOptional.get();
-            account.setAccountCanInterestRate(accountDTO.getCanInterestRate());
+            account.setAccountCanInterestRate(canInterestRate);
             account.setAccountHasCan(true);
             accountRepository.save(account);
 
-            // 로그 출력
-            logger.info("Account updated: {}", account);
-
-            return true;
+            // User 정보 업데이트
+            User user = account.getUser();
+            user.setUserHasCan(true);
+            userRepository.save(user);
         }
-
-        logger.warn("Account not found for ID: {}", accountDTO.getAccountID());
-        return false;
     }
 
     public String manageCan(Long accountID, boolean isTerminated) {
