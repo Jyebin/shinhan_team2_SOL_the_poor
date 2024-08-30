@@ -12,5 +12,4 @@ import lombok.Setter;
 public class AttendancePostsDTO {
     private Long userId;
     private String message;
-
 }
