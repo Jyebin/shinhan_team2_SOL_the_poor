@@ -6,6 +6,8 @@ import com.choikang.poor.the_poor_back.repository.UserRepository;
 import com.choikang.poor.the_poor_back.security.util.JWTUtil;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
@@ -158,6 +160,27 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
         }
     }
 
+    // 쿠키로 부터 jwt 토큰 값 가져오기
+    public String getJWTFromCookies(HttpServletRequest request){
+        String token = null;
+        for(Cookie cookie : request.getCookies()){
+            if(cookie.getName().equals("token")){
+                token = cookie.getValue();
+            }
+        }
+        return token;
+    }
+
+    // 쿠키 삭제
+    public Cookie deleteJWTFromCookie(){
+        Cookie cookie = new Cookie("token", null);
+        cookie.setPath("/");  // request에서 ContextPath 가져오기
+        cookie.setHttpOnly(true);
+        cookie.setMaxAge(0);  // 즉시 만료
+        cookie.setValue(null);  // 명시적으로 값 null 설정
+        return cookie;
+    }
+
     // 토큰으로 부터 user 정보 가져오기
     public String getUserInfo(String token) throws Exception {
         String userInfo = jwtUtil.getUserInfoFromToken(token);
@@ -172,13 +195,13 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
     }
 
     // 토큰으로부터 user id 가져오기
-    public Long getUserID(String userInfo) throws Exception {
-        return Long.parseLong(getUserInfo(userInfo).split(":")[0]);
+    public Long getUserID(String token) throws Exception {
+        return Long.parseLong(getUserInfo(token).split(":")[0]);
     }
 
     // 토큰으로부터 user access token 가져오기
-    public String getUserAccessToken(String userInfo) throws Exception{
-        return getUserInfo(userInfo).split(":")[1];
+    public String getUserAccessToken(String token) throws Exception{
+        return getUserInfo(token).split(":")[1];
     }
 
 
@@ -189,7 +212,7 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
 
         // 요청 헤더 설정
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer " + getUserID(token));
+        headers.set("Authorization", "Bearer " + getUserAccessToken(token));
 
         HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
 
@@ -199,5 +222,6 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
             throw new RuntimeException("Failed logout from kakao");
         }
     }
+
 }
 
