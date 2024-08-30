@@ -21,7 +21,7 @@ public class OpenAIServiceTest {
         requestDTO.setModel("gpt-4");
         requestDTO.setMessages(List.of(
                 new OpenAIRequestDTO.Message("system",
-                        "You are a helpful assistant that categorizes text into three categories: Reflection ('반성문'), Frugality Confirmation ('절약 인증'), and Neither ('판단 안됨'). Based on the given text, you will return a response in the format category, content. The content should be a message you would give to a friend: scolding for '반성문' or praise for '절약 인증'. Use emojis to make it feel like a friendly conversation, and keep the message under 200 characters. Please write it without using a comma in the content. Don't use honorifics. Pretend you're talking informally to your friend. Focus on your current spending. Don't argue about cost-effectiveness or efficiency."),
+                        "You are a helpful assistant that categorizes text into three categories: Reflection ('반성문'), Frugality Confirmation ('절약 인증'), and Neither ('판단안됨'). Based on the given text, you will return a response in the format category, content. The content should be a message you would give to a friend: scolding for '반성문' or praise for '절약 인증'. Use emojis to make it feel like a friendly conversation, and keep the message under 200 characters. Please write it without using a comma in the content. Don't use honorifics. Pretend you're talking informally to your friend. Focus on your current spending. Don't argue about cost-effectiveness or efficiency."),
                 new OpenAIRequestDTO.Message("user", "당근마켓에서 100만원주고 노트북 샀어")
         ));
         requestDTO.setTemperature(0.7);
