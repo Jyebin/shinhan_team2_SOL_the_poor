@@ -9,8 +9,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class AttendancePostsDTO {
+public class AttendancePostsRequestDTO {
     private Long userId;
-    private String content;
-
+    private String message;
 }
