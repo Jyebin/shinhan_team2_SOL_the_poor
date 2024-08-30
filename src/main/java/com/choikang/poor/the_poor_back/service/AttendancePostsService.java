@@ -1,6 +1,6 @@
 package com.choikang.poor.the_poor_back.service;
 
-import com.choikang.poor.the_poor_back.dto.AttendancePostsRequestDTO;
+import com.choikang.poor.the_poor_back.dto.AttendancePostsDTO;
 import com.choikang.poor.the_poor_back.dto.OpenAIRequestDTO;
 import com.choikang.poor.the_poor_back.model.AttendancePosts;
 import com.choikang.poor.the_poor_back.model.User;
@@ -22,7 +22,7 @@ public class AttendancePostsService {
     @Autowired
     private OpenAIService openAIService;
 
-    public String[] createPost(AttendancePostsRequestDTO postsDTO) {
+    public String[] createPost(AttendancePostsDTO postsDTO) {
 
         User user = userRepository.findById(postsDTO.getUserId())
                 .orElseThrow(() -> new RuntimeException("유저를 찾을 수 없습니다."));

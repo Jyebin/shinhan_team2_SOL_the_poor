@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class AttendancePostsRequestDTO {
+public class AttendancePostsDTO {
     private Long userId;
     private String message;
 }

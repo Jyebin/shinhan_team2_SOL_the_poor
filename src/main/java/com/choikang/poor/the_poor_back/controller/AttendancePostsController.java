@@ -1,6 +1,6 @@
 package com.choikang.poor.the_poor_back.controller;
 
-import com.choikang.poor.the_poor_back.dto.AttendancePostsRequestDTO;
+import com.choikang.poor.the_poor_back.dto.AttendancePostsDTO;
 import com.choikang.poor.the_poor_back.service.AttendancePostsService;
 import com.choikang.poor.the_poor_back.service.OAuth2UserService;
 import jakarta.servlet.http.Cookie;
@@ -24,7 +24,7 @@ public class AttendancePostsController {
 
     @PostMapping("/create")
     public ResponseEntity<String[]> createPost(HttpServletRequest request,
-                                               @RequestBody AttendancePostsRequestDTO attendancePostsRequestDTO)
+                                               @RequestBody AttendancePostsDTO attendancePostsDTO)
             throws Exception {
         String token = null;
         for (Cookie cookie : request.getCookies()) {
@@ -37,8 +37,8 @@ public class AttendancePostsController {
         }
         try {
             Long userId = oAuth2UserService.getUserID(token);
-            attendancePostsRequestDTO.setUserId(userId);
-            String[] responseContent = attendancePostsService.createPost(attendancePostsRequestDTO);
+            attendancePostsDTO.setUserId(userId);
+            String[] responseContent = attendancePostsService.createPost(attendancePostsDTO);
             return new ResponseEntity<>(responseContent, HttpStatus.CREATED);
         } catch (RuntimeException e) {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
