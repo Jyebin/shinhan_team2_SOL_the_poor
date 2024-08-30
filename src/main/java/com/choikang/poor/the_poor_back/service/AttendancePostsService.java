@@ -1,6 +1,6 @@
 package com.choikang.poor.the_poor_back.service;
 
-import com.choikang.poor.the_poor_back.dto.AttendancePostsDTO;
+import com.choikang.poor.the_poor_back.dto.AttendancePostsRequestDTO;
 import com.choikang.poor.the_poor_back.dto.OpenAIRequestDTO;
 import com.choikang.poor.the_poor_back.model.AttendancePosts;
 import com.choikang.poor.the_poor_back.model.User;
@@ -22,14 +22,15 @@ public class AttendancePostsService {
     @Autowired
     private OpenAIService openAIService;
 
-    public String createPost(AttendancePostsDTO postsDTO) {
+    public String[] createPost(AttendancePostsRequestDTO postsDTO) {
+
         User user = userRepository.findById(postsDTO.getUserId())
                 .orElseThrow(() -> new RuntimeException("유저를 찾을 수 없습니다."));
 
-        OpenAIRequestDTO openAIRequestDTO = createOpenAIRequest(postsDTO.getContent());
+        OpenAIRequestDTO openAIRequestDTO = createOpenAIRequest(postsDTO.getMessage());
 
         String[] responseArr = openAIService.getResponseMessage(openAIRequestDTO);
-
+        String responseType = responseArr[0];
         int attendanceType = determineAttendanceType(responseArr[0]);
         String responseContent = responseArr[1];
 
@@ -37,10 +38,13 @@ public class AttendancePostsService {
                 .user(user)
                 .attendanceDate(LocalDateTime.now())
                 .attendanceType(attendanceType)
-                .attendanceContent(postsDTO.getContent())
+                .attendanceContent(postsDTO.getMessage())
                 .build();
         attendancePostsRepository.save(attendancePosts);
-        return responseContent;
+        String[] responses = new String[2];
+        responses[0] = responseType;
+        responses[1] = responseContent;
+        return responses;
     }
 
     private OpenAIRequestDTO createOpenAIRequest(String content) {
