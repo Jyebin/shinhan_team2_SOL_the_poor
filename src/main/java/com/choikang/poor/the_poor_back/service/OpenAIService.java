@@ -46,7 +46,7 @@ public class OpenAIService {
                 result[1] = result[1].trim();
                 return result;
             }
-            return new String[]{"판단 안됨", null};
+            return new String[]{"판단안됨", null};
         } catch (HttpClientErrorException e) {
             throw e;
         }

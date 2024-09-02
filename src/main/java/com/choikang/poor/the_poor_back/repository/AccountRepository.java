@@ -9,9 +9,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface AccountRepository extends JpaRepository<Account, Long> {
     List<Account> findByUserUserID(Long userID);
     @Query("SELECT a.accountCanAmount FROM Account a WHERE a.accountID = :accountID")
     int findCanAmountByAccountID (@Param("accountID") Long accountID);
+    Optional<Account> findByAccountNumber(String accountNumber);
 }

@@ -25,4 +25,8 @@ public class User {
 
     @Column(nullable = false)
     private boolean userHasCan;
+
+    public void setUserHasCan(boolean userHasCan) {
+        this.userHasCan = userHasCan;
+    }
 }
