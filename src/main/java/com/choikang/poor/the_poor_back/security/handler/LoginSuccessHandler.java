@@ -1,7 +1,5 @@
 package com.choikang.poor.the_poor_back.security.handler;
 
-import com.choikang.poor.the_poor_back.security.util.JWTUtil;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.log4j.Log4j2;
