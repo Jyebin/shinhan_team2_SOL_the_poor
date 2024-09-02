@@ -62,6 +62,22 @@ public class AccountController {
     }
 
     // 깡통 조회
+    @GetMapping("/user/{userID}/canAccount")
+    public ResponseEntity<?> getCanAccountByUserID(@PathVariable Long userID) {
+        try {
+            Optional<AccountDTO> canAccount = accountService.getCanAccountByUserID(userID);
+            if (canAccount.isPresent()) {
+                return ResponseEntity.ok(canAccount.get());
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No CAN account found for the user.");
+            }
+        } catch (Exception e) {
+            log.error("Error fetching CAN account", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal Server Error");
+        }
+    }
+
+
     @GetMapping("/can/balance")
     public ResponseEntity<?> getCanAmount(@RequestParam("accountID") Long accountID, HttpServletRequest request) {
         String token = authService.getJWTFromCookies(request);
