@@ -1,5 +1,6 @@
 package com.choikang.poor.the_poor_back.service;
 
+import com.choikang.poor.the_poor_back.dto.AttendancePostResponseDTO;
 import com.choikang.poor.the_poor_back.dto.AttendancePostsRequestDTO;
 import com.choikang.poor.the_poor_back.dto.OpenAIRequestDTO;
 import com.choikang.poor.the_poor_back.model.AttendancePosts;
@@ -8,6 +9,10 @@ import com.choikang.poor.the_poor_back.repository.AttendancePostsRepository;
 import com.choikang.poor.the_poor_back.repository.UserRepository;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -83,5 +88,27 @@ public class AttendancePostsService {
                 break;
         }
         return answer;
+    }
+
+    public Optional<List<AttendancePostResponseDTO>> getAttendancePostList (Long userID){
+        List<AttendancePostResponseDTO> posts = attendancePostsRepository.findByUserUserID(userID)
+                .stream()
+                .map(post -> {
+                    AttendancePostResponseDTO dto = new AttendancePostResponseDTO();
+                    dto.setDate(post.getAttendanceDate().toString().substring(0, 10));
+                    dto.setContent(post.getAttendanceContent());
+                    dto.setType(switchPostTypeFromNumToWord(post.getAttendanceType()));
+                    return dto;
+                })
+                .collect(Collectors.toList());
+
+        return Optional.ofNullable(posts);
+    }
+
+    public String switchPostTypeFromNumToWord(int typeNum){
+        if(typeNum == 1){
+            return "overspending";
+        }
+        return "saving";
     }
 }
