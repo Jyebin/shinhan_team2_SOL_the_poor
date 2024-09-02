@@ -3,7 +3,7 @@ package com.choikang.poor.the_poor_back.service;
 import com.choikang.poor.the_poor_back.dto.KakaoUserDTO;
 import com.choikang.poor.the_poor_back.model.User;
 import com.choikang.poor.the_poor_back.repository.UserRepository;
-import com.choikang.poor.the_poor_back.security.util.JWTUtil;
+import com.choikang.poor.the_poor_back.securityTest.util.JWTUtil;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.Cookie;
@@ -202,6 +202,15 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
     // 토큰으로부터 user access token 가져오기
     public String getUserAccessToken(String token) throws Exception{
         return getUserInfo(token).split(":")[1];
+    }
+
+    // 토큰이 유효한지 검사하고 만일 만료되었을 시 재발급 하기
+    public String validateTokenAndRegenerate(HttpServletRequest request) throws Exception{
+        String token = getJWTFromCookies(request);
+        if(jwtUtil.isTokenExpired(token)){
+            token = jwtUtil.refreshToken(token);
+        }
+        return token;
     }
 
 

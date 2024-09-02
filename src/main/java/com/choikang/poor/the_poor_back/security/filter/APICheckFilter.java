@@ -1,6 +1,6 @@
 package com.choikang.poor.the_poor_back.security.filter;
 
-import com.choikang.poor.the_poor_back.security.util.JWTUtil;
+import com.choikang.poor.the_poor_back.securityTest.util.JWTUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

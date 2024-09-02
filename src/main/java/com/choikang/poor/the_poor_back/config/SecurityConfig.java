@@ -2,7 +2,7 @@ package com.choikang.poor.the_poor_back.config;
 
 import com.choikang.poor.the_poor_back.security.filter.APICheckFilter;
 import com.choikang.poor.the_poor_back.security.handler.LoginSuccessHandler;
-import com.choikang.poor.the_poor_back.security.util.JWTUtil;
+import com.choikang.poor.the_poor_back.securityTest.util.JWTUtil;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

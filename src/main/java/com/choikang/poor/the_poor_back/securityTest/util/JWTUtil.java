@@ -1,4 +1,4 @@
-package com.choikang.poor.the_poor_back.security.util;
+package com.choikang.poor.the_poor_back.securityTest.util;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
