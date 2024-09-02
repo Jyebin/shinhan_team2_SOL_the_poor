@@ -1,7 +1,6 @@
 package com.choikang.poor.the_poor_back.controller;
 
-import com.choikang.poor.the_poor_back.dto.AttendancePostResponseDTO;
-import com.choikang.poor.the_poor_back.dto.AttendancePostsDTO;
+import com.choikang.poor.the_poor_back.dto.AttendancePostsRequestDTO;
 import com.choikang.poor.the_poor_back.service.AttendancePostsService;
 import com.choikang.poor.the_poor_back.service.OAuth2UserService;
 import jakarta.servlet.http.Cookie;
@@ -9,10 +8,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.Optional;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/attendance")
@@ -24,20 +23,19 @@ public class AttendancePostsController {
     private OAuth2UserService oAuth2UserService;
 
     @PostMapping("/create")
-    public ResponseEntity<String> createPost(HttpServletRequest request, @RequestBody AttendancePostsDTO attendancePostsDTO)
+    public ResponseEntity<String[]> createPost(HttpServletRequest request,
+                                               @RequestBody AttendancePostsRequestDTO attendancePostsRequestDTO)
             throws Exception {
         try{
             String token = oAuth2UserService.getJWTFromCookies(request);
             Long userId = oAuth2UserService.getUserID(token);
-            System.out.println(userId);
-            attendancePostsDTO.setUserId(userId);
-            String responseContent = attendancePostsService.createPost(attendancePostsDTO);
+            attendancePostsRequestDTO.setUserId(userId);
+            String[] responseContent = attendancePostsService.createPost(attendancePostsRequestDTO);
             return new ResponseEntity<>(responseContent, HttpStatus.CREATED);
-        }catch (RuntimeException e){
+        } catch (RuntimeException e) {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
     }
-
 
     @GetMapping("/view")
     public ResponseEntity<?> viewAttendance(HttpServletRequest request){
@@ -55,4 +53,5 @@ public class AttendancePostsController {
             return new ResponseEntity<>("서버 오류가 발생했습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
 }

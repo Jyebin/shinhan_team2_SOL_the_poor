@@ -4,13 +4,16 @@ import com.choikang.poor.the_poor_back.dto.AccountDTO;
 import com.choikang.poor.the_poor_back.dto.TransactionDTO;
 import com.choikang.poor.the_poor_back.model.Account;
 import com.choikang.poor.the_poor_back.model.Transaction;
+import com.choikang.poor.the_poor_back.model.User;
 import com.choikang.poor.the_poor_back.repository.AccountRepository;
 import com.choikang.poor.the_poor_back.repository.TransactionRepository;
+import com.choikang.poor.the_poor_back.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -20,6 +23,9 @@ import java.util.stream.Collectors;
 public class AccountService {
     @Autowired
     AccountRepository accountRepository;
+
+    @Autowired
+    private UserRepository userRepository; // UserRepository 추가
 
     @Autowired
     TransactionRepository transactionRepository;
@@ -41,6 +47,29 @@ public class AccountService {
     // Can 잔액 가져와서 보여주기
     public int getCanAmountByAccountID(Long accountID) {
         return accountRepository.findCanAmountByAccountID(accountID);
+    }
+
+    public Optional<Account> getAccountByID(Long accountID) {
+        return accountRepository.findById(accountID);
+    }
+
+
+    private static final Logger logger = LoggerFactory.getLogger(AccountService.class);
+
+    public void updateAccountAndUserCanInfo(Long accountID, double canInterestRate) {
+        // Account 정보 업데이트
+        Optional<Account> accountOptional = accountRepository.findById(accountID);
+        if (accountOptional.isPresent()) {
+            Account account = accountOptional.get();
+            account.setAccountCanInterestRate(canInterestRate);
+            account.setAccountHasCan(true);
+            accountRepository.save(account);
+
+            // User 정보 업데이트
+            User user = account.getUser();
+            user.setUserHasCan(true);
+            userRepository.save(user);
+        }
     }
 
     public String manageCan(Long accountID, boolean isTerminated) {
