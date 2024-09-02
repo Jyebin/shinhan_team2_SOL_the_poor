@@ -1,7 +1,9 @@
 package com.choikang.poor.the_poor_back.service;
 
 import com.choikang.poor.the_poor_back.dto.KakaoUserDTO;
+import com.choikang.poor.the_poor_back.model.Account;
 import com.choikang.poor.the_poor_back.model.User;
+import com.choikang.poor.the_poor_back.repository.AccountRepository;
 import com.choikang.poor.the_poor_back.repository.UserRepository;
 import com.choikang.poor.the_poor_back.securityTest.util.JWTUtil;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -29,6 +31,7 @@ import java.util.Optional;
 @Lazy
 public class OAuth2UserService extends DefaultOAuth2UserService {
     private final UserRepository userRepository;
+    private final AccountRepository accountRepository;
     private final JWTUtil jwtUtil;
 
     @Value("${spring.security.oauth2.client.registration.kakao.client-id}")
@@ -50,7 +53,7 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
         User user = saveOrUpdateUser(kakaoUserDTO);
 
         // user id를 통해서 JWT 토큰 생성
-        return jwtUtil.generateToken(user.getUserID()+":"+accessToken);
+        return jwtUtil.generateToken(user.getUserID() + ":" + accessToken);
     }
 
     // 사용자 인증 수단 (액세스 토큰)가져옴
@@ -90,20 +93,18 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
                     JsonNode root = objectMapper.readTree(responseBody);
                     JsonNode accessTokenNode = root.path("access_token");
                     if (!accessTokenNode.isMissingNode()) {
-                        String accessToken = accessTokenNode.asText();
-                        System.out.println("Access Token: " + accessToken); // 실제 사용 시 로그로 대체
-                        return accessToken;
+                        return accessTokenNode.asText();
                     } else {
-                        System.err.println("액세스 토큰 필드가 응답에 없습니다.");
+                        log.error("액세스 토큰 필드가 응답에 없습니다.");
                     }
                 } else {
-                    System.err.println("응답 본문이 null입니다.");
+                    log.error("응답 본문이 null입니다.");
                 }
             } else {
-                System.err.println("액세스 토큰을 가져오는 중 오류 발생: " + response.getStatusCode()); // 실제 사용 시 로그로 대체
+                log.error("액세스 토큰을 가져오는 중 오류 발생: " + response.getStatusCode());
             }
         } catch (Exception e) {
-            System.err.println("액세스 토큰을 가져오는 중 오류 발생: " + e.getMessage());
+            log.error("액세스 토큰을 가져오는 중 오류 발생: " + e.getMessage());
         }
         return "Error";
     }
@@ -138,7 +139,7 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
                 throw new RuntimeException("Kakao API 응답 본문이 null입니다.");
             }
         } catch (Exception e) {
-            System.err.println("Kakao API 호출 중 오류 발생: " + e.getMessage());
+            log.error("Kakao API 호출 중 오류 발생: " + e.getMessage());
             throw new RuntimeException("Kakao API 호출 중 오류 발생", e);
         }
     }
@@ -156,8 +157,47 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
                     .userName(kakaoUserDTO.getName())
                     .userEmail(kakaoUserDTO.getEmail())
                     .build();
-            return userRepository.save(newUser);
+            User savedUser = userRepository.save(newUser);
+
+            // 사용자 생성 시 더미 계좌 추가
+            insertDummyAccounts(savedUser);
+
+            return savedUser;
         }
+    }
+
+    private void insertDummyAccounts(User user) {
+        String accountNumber1 = generateUniqueAccountNumber();
+        String accountNumber2 = generateUniqueAccountNumber();
+
+        Account account1 = Account.builder()
+                .accountBalance(123456)
+                .accountPW(1111)
+                .accountName("쏠편한 입출금통장(저축예금)")
+                .accountNumber(accountNumber1)
+                .accountHasCan(false)
+                .user(user)
+                .build();
+        accountRepository.save(account1);
+
+        Account account2 = Account.builder()
+                .accountBalance(22222)
+                .accountPW(2222)
+                .accountName("[금융거래한도계좌1] 신한 청년 DREAM 통장")
+                .accountNumber(accountNumber2)
+                .accountHasCan(false)
+                .user(user)
+                .build();
+        accountRepository.save(account2);
+    }
+
+    private String generateUniqueAccountNumber() {
+        String accountNumber;
+        do {
+            accountNumber = "110-" + (int)(Math.random() * 900 + 100) + "-" + (int)(Math.random() * 9000 + 1000);
+        } while (accountRepository.findByAccountNumber(accountNumber).isPresent());
+
+        return accountNumber;
     }
 
     // 쿠키로 부터 jwt 토큰 값 가져오기
