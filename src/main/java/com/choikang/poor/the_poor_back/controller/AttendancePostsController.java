@@ -26,16 +26,8 @@ public class AttendancePostsController {
     public ResponseEntity<String[]> createPost(HttpServletRequest request,
                                                @RequestBody AttendancePostsRequestDTO attendancePostsRequestDTO)
             throws Exception {
-        String token = null;
-        for (Cookie cookie : request.getCookies()) {
-            if (cookie.getName().equals("token")) {
-                token = cookie.getValue();
-            }
-        }
-        if (token == null) {
-            return new ResponseEntity<>(new String[0], HttpStatus.UNAUTHORIZED);
-        }
-        try {
+        try{
+            String token = oAuth2UserService.getJWTFromCookies(request);
             Long userId = oAuth2UserService.getUserID(token);
             attendancePostsRequestDTO.setUserId(userId);
             String[] responseContent = attendancePostsService.createPost(attendancePostsRequestDTO);
@@ -44,4 +36,22 @@ public class AttendancePostsController {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
     }
+
+    @GetMapping("/view")
+    public ResponseEntity<?> viewAttendance(HttpServletRequest request){
+        try {
+            String token = oAuth2UserService.getJWTFromCookies(request);
+            Long userID = oAuth2UserService.getUserID(token);
+            Optional<List<AttendancePostResponseDTO>> userPostList = attendancePostsService.getAttendancePostList(userID);
+
+            if(userPostList.isPresent()){
+                return new ResponseEntity<>(userPostList.get(), HttpStatus.OK);
+            }
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (Exception e){
+            e.printStackTrace();
+            return new ResponseEntity<>("서버 오류가 발생했습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 }
