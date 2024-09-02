@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface AccountRepository extends JpaRepository<Account, Long> {
     List<Account> findByUserUserID(Long userID);
@@ -32,5 +33,7 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
             " WHERE a.accountID = :accountID")
     @Transactional
     void updateBalanceAndResetCanAmount(@Param("accountID") Long accountID);
+
+    Optional<Account> findByAccountNumber(String accountNumber);
 
 }

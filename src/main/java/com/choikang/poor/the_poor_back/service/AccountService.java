@@ -4,14 +4,16 @@ import com.choikang.poor.the_poor_back.dto.AccountDTO;
 import com.choikang.poor.the_poor_back.dto.TransactionDTO;
 import com.choikang.poor.the_poor_back.model.Account;
 import com.choikang.poor.the_poor_back.model.Transaction;
+import com.choikang.poor.the_poor_back.model.User;
 import com.choikang.poor.the_poor_back.repository.AccountRepository;
 import com.choikang.poor.the_poor_back.repository.TransactionRepository;
 import com.choikang.poor.the_poor_back.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -23,10 +25,10 @@ public class AccountService {
     AccountRepository accountRepository;
 
     @Autowired
-    TransactionRepository transactionRepository;
+    private UserRepository userRepository; // UserRepository 추가
 
     @Autowired
-    UserRepository userRepository;
+    TransactionRepository transactionRepository;
 
     public List<AccountDTO> getAccountsByUserID(Long userID) {
         List<Account> accounts = accountRepository.findByUserUserID(userID);
@@ -47,12 +49,32 @@ public class AccountService {
         return accountRepository.findCanAmountByAccountID(accountID);
     }
 
+    public Optional<Account> getAccountByID(Long accountID) {
+        return accountRepository.findById(accountID);
+    }
+
+    private static final Logger logger = LoggerFactory.getLogger(AccountService.class);
+
+    public void updateAccountAndUserCanInfo(Long accountID, double canInterestRate) {
+        // Account 정보 업데이트
+        Optional<Account> accountOptional = accountRepository.findById(accountID);
+        if (accountOptional.isPresent()) {
+            Account account = accountOptional.get();
+            account.setAccountCanInterestRate(canInterestRate);
+            account.setAccountHasCan(true);
+            accountRepository.save(account);
+
+            // User 정보 업데이트
+            User user = account.getUser();
+            user.setUserHasCan(true);
+            userRepository.save(user);
+        }
+    }
+
     public String manageCan(Long accountID, String state) {
-        Long userID = accountRepository.findUserIDByAccountID(accountID);
+        terminateCanByAccountID(accountID); // 깡통 잔액 계좌로 입금
         String redirectURL = "";
-
-        System.out.println(state + "!!!!!!!!!!!!!!!!!!!!!");
-
+        Long userID = accountRepository.findUserIDByAccountID(accountID);
         // state = 'register'
         if ("register".equals(state)) {
             // hasCan = true
@@ -68,10 +90,13 @@ public class AccountService {
                 userRepository.updateUserHasCanById(userID, false);
 
                 redirectURL = "/myAccount";
-                System.out.println("unchecked!!!!!!!!!!!");
             }
             accountRepository.updateBalanceAndResetCanAmount(accountID);
         }
         return redirectURL;
+    }
+
+    private void terminateCanByAccountID(Long accountID) {
+        // 깡통 해지 관련 비즈니스 로직
     }
 }
