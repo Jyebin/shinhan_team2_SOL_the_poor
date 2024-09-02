@@ -17,17 +17,5 @@ public class InstallmentSavings {
 
     @Column(length = 50, nullable = false)
     private String ISName;
-
-    @Column(length = 50, nullable = false, unique = true)
-    private String ISNumber;
-
-    @Column(length = 4, nullable = false)
-    private int ISPW;
-
-    @Column(nullable = false)
-    private int ISBalance;
-
-    @ManyToOne
-    @JoinColumn(name = "userID", nullable = false)
-    private User user;
+ 
 }
