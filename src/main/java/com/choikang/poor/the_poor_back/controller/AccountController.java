@@ -32,6 +32,7 @@ public class AccountController {
     @Autowired
     private UserService userService;
 
+    // 계좌 리스트 조회
     @GetMapping("/list")
     public ResponseEntity<?> getAccountList(HttpServletRequest request) {
         String token = authService.getJWTFromCookies(request);
@@ -48,6 +49,7 @@ public class AccountController {
         }
     }
 
+    // 거래내역 조회
     @GetMapping("/transaction/list")
     public ResponseEntity<List<TransactionDTO>> getTransactionList(@RequestParam("accountID") Long accountID) {
         try {
@@ -59,6 +61,7 @@ public class AccountController {
         }
     }
 
+    // 깡통 조회
     @GetMapping("/user/{userID}/canAccount")
     public ResponseEntity<?> getCanAccountByUserID(@PathVariable Long userID) {
         try {
@@ -98,12 +101,12 @@ public class AccountController {
     }
 
     @PostMapping("/can/manage")
-    public ResponseEntity<Map<String, String>> manageCan(@RequestParam Long accountID, @RequestParam boolean isTerminated) {
+    public ResponseEntity<? extends Object> manageCan(@RequestBody Map<String, Object> request) {
         try {
-            String redirectUrl = accountService.manageCan(accountID, isTerminated);
+            Long accountID = Long.valueOf(request.get("accountID").toString());
+            String status = (String) request.get("status");
             Map<String, String> response = new HashMap<>();
-            response.put("redirectUrl", redirectUrl);
-
+            response.put("redirectUrl", accountService.manageCan(accountID, status));
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             log.error("Error managing CAN", e);
