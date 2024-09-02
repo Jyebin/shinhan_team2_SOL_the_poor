@@ -26,15 +26,10 @@ public class AttendancePostsController {
     @PostMapping("/create")
     public ResponseEntity<String> createPost(HttpServletRequest request, @RequestBody AttendancePostsDTO attendancePostsDTO)
             throws Exception {
-        String token = null;
-        for(Cookie cookie : request.getCookies()){
-            if(cookie.getName().equals("token")){
-                token = cookie.getValue();
-            }
-        }
-
         try{
+            String token = oAuth2UserService.getJWTFromCookies(request);
             Long userId = oAuth2UserService.getUserID(token);
+            System.out.println(userId);
             attendancePostsDTO.setUserId(userId);
             String responseContent = attendancePostsService.createPost(attendancePostsDTO);
             return new ResponseEntity<>(responseContent, HttpStatus.CREATED);
@@ -48,9 +43,7 @@ public class AttendancePostsController {
     public ResponseEntity<?> viewAttendance(HttpServletRequest request){
         try {
             String token = oAuth2UserService.getJWTFromCookies(request);
-            System.out.println(token);
             Long userID = oAuth2UserService.getUserID(token);
-            System.out.println(oAuth2UserService.getUserAccessToken(token));
             Optional<List<AttendancePostResponseDTO>> userPostList = attendancePostsService.getAttendancePostList(userID);
 
             if(userPostList.isPresent()){
