@@ -3,20 +3,18 @@ package com.choikang.poor.the_poor_back.service;
 import com.choikang.poor.the_poor_back.dto.UserDTO;
 import com.choikang.poor.the_poor_back.model.User;
 import com.choikang.poor.the_poor_back.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
-
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
     public Boolean findUserHasCanByUserID(Long userID) {
-        Optional<User> user = userRepository.findById(userID);
-        return user.map(User::isUserHasCan).orElse(false);
+        return userRepository.findUserHasCanByUserID(userID);
     }
 
     public UserDTO getUserByID(Long userID) {

@@ -15,7 +15,7 @@ public class AccountDTO {
     private Boolean hasCan;
     private double canInterestRate;
 
-    public static AccountDTO convertToDTO(Account account) {
+    public static AccountDTO of(Account account) {
         return AccountDTO.builder()
                 .accountID(account.getAccountID())
                 .number(account.getAccountNumber())
