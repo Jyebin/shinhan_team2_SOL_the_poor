@@ -45,9 +45,9 @@ public class AuthController {
         if(token != null){
             oAuth2UserService.kakaoLogout(token);
             response.addCookie(oAuth2UserService.deleteJWTFromCookie());
-
+            return ResponseEntity.ok().build();
         }
-        return ResponseEntity.ok().build();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
 
     @GetMapping("/validate")

@@ -40,7 +40,7 @@ public class AccountController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("토큰이 존재하지 않습니다.");
         }
         try {
-            Long userID = authService.getUserID(token);  // userID는 JWT에서 추출
+            Long userID = authService.getUserIDFromJWT(token);  // userID는 JWT에서 추출
             List<AccountDTO> accountList = accountService.getAccountsByUserID(userID);
             return ResponseEntity.ok(accountList);
         } catch (Exception e) {
@@ -85,7 +85,7 @@ public class AccountController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("토큰이 존재하지 않습니다.");
         }
         try {
-            Long userID = authService.getUserID(token);
+            Long userID = authService.getUserIDFromJWT(token);
             int userAttendanceCnt = userService.findUserAttendanceCntByUserID(userID);
             int canAmount = accountService.getCanAmountByAccountID(accountID);
 

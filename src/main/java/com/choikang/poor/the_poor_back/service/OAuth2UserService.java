@@ -5,7 +5,7 @@ import com.choikang.poor.the_poor_back.model.Account;
 import com.choikang.poor.the_poor_back.model.User;
 import com.choikang.poor.the_poor_back.repository.AccountRepository;
 import com.choikang.poor.the_poor_back.repository.UserRepository;
-import com.choikang.poor.the_poor_back.securityTest.util.JWTUtil;
+import com.choikang.poor.the_poor_back.security.util.JWTUtil;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.Cookie;
@@ -43,10 +43,10 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
     @Value("${spring.security.oauth2.client.registration.kakao.client-secret}")
     private String kakaoClientSecret;
 
-    // 카카오 로그인
+
+    // 카카오 로그인, JWT 생성 후 return
     public String kakaoLogin(String code) throws Exception {
         String accessToken = getKakaoAccessToken(code);
-        System.out.println(accessToken);
         KakaoUserDTO kakaoUserDTO = getKakaoUserInfo(accessToken);
 
         // 사용자 정보를 바탕으로 User 엔티티 저장 또는 업데이트
@@ -56,7 +56,7 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
         return jwtUtil.generateToken(user.getUserID() + ":" + accessToken);
     }
 
-    // 사용자 인증 수단 (액세스 토큰)가져옴
+    // 카카오 개발자 도구에 POST 요청하여 사용자 인증 수단 (액세스 토큰)가져옴
     public String getKakaoAccessToken(String code) {
         RestTemplate restTemplate = new RestTemplate();
 
@@ -64,8 +64,8 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
         MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
         parameters.add("grant_type", "authorization_code");
         parameters.add("client_id", kakaoClientID);
-        parameters.add("client_secret", kakaoClientSecret); // 클라이언트 시크릿 추가
-        parameters.add("redirect_uri", redirectURL); // 등록된 리다이렉트 URI 확인
+        parameters.add("client_secret", kakaoClientSecret);
+        parameters.add("redirect_uri", redirectURL);
         parameters.add("code", code);
 
         // 요청 헤더 설정
@@ -144,11 +144,11 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
         }
     }
 
-    // 테이블에 유저 정보 저장
+    // DB에 사용자 정보 저장
     private User saveOrUpdateUser(KakaoUserDTO kakaoUserDTO) {
         Optional<User> existingUser = userRepository.findByUserEmail(kakaoUserDTO.getEmail());
 
-        // DB에 USER가 존재하면 해당 유저 return 아니면 새로 저장
+        // DB에 사용자 존재하면 해당 사용자 정보 return, 아니면 새로 저장
         if (existingUser.isPresent()) {
             return existingUser.get();
         } else {
@@ -200,7 +200,7 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
         return accountNumber;
     }
 
-    // 쿠키로 부터 jwt 토큰 값 가져오기
+    // 쿠키로 부터 JWT 값 가져오기
     public String getJWTFromCookies(HttpServletRequest request){
         String token = null;
         for(Cookie cookie : request.getCookies()){
@@ -214,17 +214,16 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
     // 쿠키 삭제
     public Cookie deleteJWTFromCookie(){
         Cookie cookie = new Cookie("token", null);
-        cookie.setPath("/");  // request에서 ContextPath 가져오기
+        cookie.setPath("/");
         cookie.setHttpOnly(true);
-        cookie.setMaxAge(0);  // 즉시 만료
-        cookie.setValue(null);  // 명시적으로 값 null 설정
+        cookie.setMaxAge(0);
+        cookie.setValue(null);
         return cookie;
     }
 
-    // 토큰으로 부터 user 정보 가져오기
+    // JWT로부터 user 정보 가져오기
     public String getUserInfo(String token) throws Exception {
         String userInfo = jwtUtil.getUserInfoFromToken(token);
-
         Optional<User> userOptional = userRepository.findById(Long.valueOf(userInfo.split(":")[0]));
 
         if (userOptional.isPresent()) {
@@ -234,17 +233,17 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
         }
     }
 
-    // 토큰으로부터 user id 가져오기
-    public Long getUserID(String token) throws Exception {
+    // JWT로부터 user id 가져오기
+    public Long getUserIDFromJWT(String token) throws Exception {
         return Long.parseLong(getUserInfo(token).split(":")[0]);
     }
 
-    // 토큰으로부터 user access token 가져오기
-    public String getUserAccessToken(String token) throws Exception{
+    // JWT로부터 user access token 가져오기
+    public String getUserAccessTokenFromJWT(String token) throws Exception{
         return getUserInfo(token).split(":")[1];
     }
 
-    // 토큰이 유효한지 검사하고 만일 만료되었을 시 재발급 하기
+    // JWT가 유효한지 검사하고 만일 만료되었을 시 재발급 하기
     public String validateTokenAndRegenerate(HttpServletRequest request) throws Exception{
         String token = getJWTFromCookies(request);
         if(jwtUtil.isTokenExpired(token)){
@@ -253,7 +252,6 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
         return token;
     }
 
-
     // 카카오 로그아웃 api get 요청
     public void kakaoLogout(String token) throws Exception {
         RestTemplate restTemplate = new RestTemplate();
@@ -261,7 +259,7 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
 
         // 요청 헤더 설정
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer " + getUserAccessToken(token));
+        headers.set("Authorization", "Bearer " + getUserAccessTokenFromJWT(token));
 
         HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
 

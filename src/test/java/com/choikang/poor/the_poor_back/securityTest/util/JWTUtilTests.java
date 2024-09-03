@@ -1,5 +1,6 @@
 package com.choikang.poor.the_poor_back.securityTest.util;
 
+import com.choikang.poor.the_poor_back.security.util.JWTUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
