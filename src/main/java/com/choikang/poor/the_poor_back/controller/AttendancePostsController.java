@@ -28,8 +28,6 @@ public class AttendancePostsController {
                                                @RequestBody AttendancePostsRequestDTO attendancePostsRequestDTO)
             throws Exception {
         String token = null;
-        System.out.println("ㅇㅕ기야 여기 : " + request);
-        System.out.println("또 여기야 여기 : " + attendancePostsRequestDTO);
         for (Cookie cookie : request.getCookies()) {
             if (cookie.getName().equals("token")) {
                 token = cookie.getValue();
@@ -38,12 +36,10 @@ public class AttendancePostsController {
         if (token == null) {
             return new ResponseEntity<>(new String[0], HttpStatus.UNAUTHORIZED);
         }
-
         try {
-            Long userId = oAuth2UserService.getUserID(token);
+            Long userId = oAuth2UserService.getUserIDFromJWT(token);
             attendancePostsRequestDTO.setUserId(userId);
             String[] responseContent = attendancePostsService.createPost(attendancePostsRequestDTO);
-            System.out.println("responseContent : " + responseContent);
             return new ResponseEntity<>(responseContent, HttpStatus.CREATED);
         } catch (RuntimeException e) {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
@@ -51,17 +47,18 @@ public class AttendancePostsController {
     }
 
     @GetMapping("/view")
-    public ResponseEntity<?> viewAttendance(HttpServletRequest request){
+    public ResponseEntity<?> viewAttendance(HttpServletRequest request) {
         try {
             String token = oAuth2UserService.getJWTFromCookies(request);
-            Long userID = oAuth2UserService.getUserID(token);
-            Optional<List<AttendancePostResponseDTO>> userPostList = attendancePostsService.getAttendancePostList(userID);
+            Long userID = oAuth2UserService.getUserIDFromJWT(token);
+            Optional<List<AttendancePostResponseDTO>> userPostList = attendancePostsService.getAttendancePostList(
+                    userID);
 
-            if(userPostList.isPresent()){
+            if (userPostList.isPresent()) {
                 return new ResponseEntity<>(userPostList.get(), HttpStatus.OK);
             }
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>("서버 오류가 발생했습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
         }

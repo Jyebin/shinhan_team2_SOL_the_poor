@@ -38,8 +38,7 @@ public class AttendancePostsService {
         String responseType = responseArr[0];
         int attendanceType = determineAttendanceType(responseArr[0]);
         String responseContent = responseArr[1];
-
-        if(responseType != "'판단안됨'"){
+        if(!responseType.equals("'판단안됨'")){
             AttendancePosts attendancePosts = AttendancePosts.builder()
                     .user(user)
                     .attendanceDate(LocalDateTime.now())
@@ -47,6 +46,9 @@ public class AttendancePostsService {
                     .attendanceContent(postsDTO.getMessage())
                     .build();
             attendancePostsRepository.save(attendancePosts);
+        }
+        else{
+            updateUserAttendanceCnt(user.getUserID());
         }
 
         String[] responses = new String[2];
@@ -58,7 +60,7 @@ public class AttendancePostsService {
     private OpenAIRequestDTO createOpenAIRequest(String content) {
         OpenAIRequestDTO.Message systemMessage = new OpenAIRequestDTO.Message(
                 "system",
-                "You are a helpful assistant that categorizes text into three categories: Reflection ('반성문'), Frugality Confirmation ('절약 인증'), and Neither ('판단안됨'). Based on the given text, you will return a response in the format [category, content]. The content should be a message you would give to a friend: scolding for '반성문' or praise for '절약 인증'. Use emojis to make it feel like a friendly conversation, and keep the message under 200 characters. Please write it without using a comma in the content. Don't use honorifics. Pretend you're talking informally to your friend. Focus on your current spending. Don't argue about cost-effectiveness or efficiency."
+                "You are a helpful assistant that categorizes text into three categories: Reflection ('과소비'), Frugality Confirmation ('절약'), and Neither ('판단안됨'). Based on the given text, you will return a response in the format [category, content]. The content should be a message you would give to a friend: scolding for '과소비' or praise for '절약인증'. Use emojis to make it feel like a friendly conversation, and keep the message under 200 characters. Please write it without using a comma in the content. Don't use honorifics. Pretend you're talking informally to your friend. Focus on your current spending. Don't argue about cost-effectiveness or efficiency."
         );
 
         OpenAIRequestDTO.Message userMessage = new OpenAIRequestDTO.Message(
@@ -77,10 +79,10 @@ public class AttendancePostsService {
     private int determineAttendanceType(String attendanceType) {
         int answer = 0;
         switch (attendanceType) {
-            case "'반성문'":
+            case "'과소비'":
                 answer = 1;
                 break;
-            case "'절약 인증'":
+            case "'절약'":
                 answer = 2;
                 break;
             case "'판단안됨'":
@@ -90,6 +92,13 @@ public class AttendancePostsService {
         return answer;
     }
 
+    // DB에 사용자 출석 수 update
+    public void updateUserAttendanceCnt(Long userID){
+        int updatedAttendancePostCnt = attendancePostsRepository.countAllByUserUserID(userID);
+        userRepository.updateUserAttendanceCnt(userID, updatedAttendancePostCnt);
+    }
+
+    // DB로부터 사용자의 모든 작성 출석글 조회
     public Optional<List<AttendancePostResponseDTO>> getAttendancePostList (Long userID){
         List<AttendancePostResponseDTO> posts = attendancePostsRepository.findByUserUserID(userID)
                 .stream()
@@ -105,6 +114,7 @@ public class AttendancePostsService {
         return Optional.ofNullable(posts);
     }
 
+    // 출석 글의 타입을 React에서 바로 사용할 수 있도록 변환
     public String switchPostTypeFromNumToWord(int typeNum){
         if(typeNum == 1){
             return "overspending";

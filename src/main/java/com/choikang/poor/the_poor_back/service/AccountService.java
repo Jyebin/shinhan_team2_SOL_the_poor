@@ -49,10 +49,17 @@ public class AccountService {
         return accountRepository.findCanAmountByAccountID(accountID);
     }
 
+    public Optional<AccountDTO> getCanAccountByUserID(Long userID) {
+        return accountRepository.findByUserUserID(userID)
+                .stream()
+                .filter(Account::isAccountHasCan)
+                .findFirst()
+                .map(AccountDTO::convertToDTO);
+    }
+
     public Optional<Account> getAccountByID(Long accountID) {
         return accountRepository.findById(accountID);
     }
-
 
     private static final Logger logger = LoggerFactory.getLogger(AccountService.class);
 
@@ -72,19 +79,32 @@ public class AccountService {
         }
     }
 
-    public String manageCan(Long accountID, boolean isTerminated) {
+    public String manageCan(Long accountID, String state) {
         terminateCanByAccountID(accountID); // 깡통 잔액 계좌로 입금
+        String redirectURL = "";
+        Long userID = accountRepository.findUserIDByAccountID(accountID);
+        // state = 'register'
+        if ("register".equals(state)) {
+            // hasCan = true
+            accountRepository.updateAccountHasCanByAccountID(accountID, true);
+            userRepository.updateUserHasCanById(userID, true);
 
-        if (isTerminated) {
-            // 계좌의 hasCan -> false로 변경
-            return "/myAccount"; // 리다이렉트할 URL 반환
+            redirectURL = "/";
         } else {
-            return ""; // 현재 페이지에 머무르도록 빈 문자열 반환
+            // state = 'terminateChecked'
+            if ("terminateUnChecked".equals(state)) {
+                // hasCan = false
+                accountRepository.updateAccountHasCanByAccountID(accountID, false);
+                userRepository.updateUserHasCanById(userID, false);
+
+                redirectURL = "/myAccount";
+            }
+            accountRepository.updateBalanceAndResetCanAmount(accountID);
         }
+        return redirectURL;
     }
 
     private void terminateCanByAccountID(Long accountID) {
         // 깡통 해지 관련 비즈니스 로직
-
     }
 }
