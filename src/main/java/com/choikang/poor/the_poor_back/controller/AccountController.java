@@ -40,7 +40,7 @@ public class AccountController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("토큰이 존재하지 않습니다.");
         }
         try {
-            Long userID = authService.getUserIDFromJWT(token);  // userID는 JWT에서 추출
+            Long userID = authService.getUserID(token);  // userID는 JWT에서 추출
             List<AccountDTO> accountList = accountService.getAccountsByUserID(userID);
             return ResponseEntity.ok(accountList);
         } catch (Exception e) {
@@ -62,22 +62,6 @@ public class AccountController {
     }
 
     // 깡통 조회
-    @GetMapping("/user/{userID}/canAccount")
-    public ResponseEntity<?> getCanAccountByUserID(@PathVariable Long userID) {
-        try {
-            Optional<AccountDTO> canAccount = accountService.getCanAccountByUserID(userID);
-            if (canAccount.isPresent()) {
-                return ResponseEntity.ok(canAccount.get());
-            } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No CAN account found for the user.");
-            }
-        } catch (Exception e) {
-            log.error("Error fetching CAN account", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal Server Error");
-        }
-    }
-
-
     @GetMapping("/can/balance")
     public ResponseEntity<?> getCanAmount(@RequestParam("accountID") Long accountID, HttpServletRequest request) {
         String token = authService.getJWTFromCookies(request);
@@ -85,7 +69,7 @@ public class AccountController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("토큰이 존재하지 않습니다.");
         }
         try {
-            Long userID = authService.getUserIDFromJWT(token);
+            Long userID = authService.getUserID(token);
             int userAttendanceCnt = userService.findUserAttendanceCntByUserID(userID);
             int canAmount = accountService.getCanAmountByAccountID(accountID);
 

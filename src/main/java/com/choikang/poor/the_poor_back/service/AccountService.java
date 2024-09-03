@@ -49,14 +49,6 @@ public class AccountService {
         return accountRepository.findCanAmountByAccountID(accountID);
     }
 
-    public Optional<AccountDTO> getCanAccountByUserID(Long userID) {
-        return accountRepository.findByUserUserID(userID)
-                .stream()
-                .filter(Account::isAccountHasCan)
-                .findFirst()
-                .map(AccountDTO::convertToDTO);
-    }
-
     public Optional<Account> getAccountByID(Long accountID) {
         return accountRepository.findById(accountID);
     }

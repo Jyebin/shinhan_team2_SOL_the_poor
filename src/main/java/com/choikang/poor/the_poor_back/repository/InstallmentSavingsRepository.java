@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface InstallmentSavingsRepository extends JpaRepository<InstallmentSavings, Long> {
 
-//    List<InstallmentSavings> findByUserUserID(Long userID);
+    List<InstallmentSavings> findByUserUserID(Long userID);
 
     Optional<InstallmentSavings> findById(Long ISID);
 }

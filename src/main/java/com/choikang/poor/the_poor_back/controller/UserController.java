@@ -28,7 +28,7 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("토큰이 존재하지 않습니다.");
         }
         try {
-            Long userID = authService.getUserIDFromJWT(token);
+            Long userID = authService.getUserID(token);
             Boolean userHasCan = userService.findUserHasCanByUserID(userID);
             return ResponseEntity.ok(userHasCan);
         } catch (Exception e) {
@@ -44,7 +44,7 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("토큰이 존재하지 않습니다.");
         }
         try {
-            Long userID = authService.getUserIDFromJWT(token);
+            Long userID = authService.getUserID(token);
             UserDTO userDTO = userService.getUserByID(userID);
             return ResponseEntity.ok(userDTO);
         } catch (Exception e) {
