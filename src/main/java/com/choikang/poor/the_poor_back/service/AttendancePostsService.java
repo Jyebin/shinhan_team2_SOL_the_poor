@@ -89,6 +89,7 @@ public class AttendancePostsService {
         return answer;
     }
 
+    // DB로부터 사용자의 모든 작성 출석글 조회
     public Optional<List<AttendancePostResponseDTO>> getAttendancePostList (Long userID){
         List<AttendancePostResponseDTO> posts = attendancePostsRepository.findByUserUserID(userID)
                 .stream()
@@ -104,6 +105,7 @@ public class AttendancePostsService {
         return Optional.ofNullable(posts);
     }
 
+    // 출석 글의 타입을 React에서 바로 사용할 수 있도록 변환
     public String switchPostTypeFromNumToWord(int typeNum){
         if(typeNum == 1){
             return "overspending";
