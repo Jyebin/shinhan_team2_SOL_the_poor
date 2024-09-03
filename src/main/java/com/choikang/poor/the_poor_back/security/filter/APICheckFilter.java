@@ -25,14 +25,12 @@ public class APICheckFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException{
         if (antPathMatcher.match("/api/oauth2/kakao", request.getRequestURI()) || antPathMatcher.match("/api/logout", request.getRequestURI())){
-//                || antPathMatcher.match("/login/oauth2/code/kakao", request.getRequestURI())) {
             filterChain.doFilter(request, response);
             return;
         }
 
         if (antPathMatcher.match(pattern, request.getRequestURI())) {
             boolean checkHeader = checkAuthHeader(request);
-
             if (!checkHeader) {
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
                 return;
