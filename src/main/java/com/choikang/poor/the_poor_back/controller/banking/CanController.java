@@ -32,7 +32,7 @@ public class CanController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("토큰이 존재하지 않습니다.");
         }
         try {
-            Long userID = authService.getUserID(token);
+            Long userID = authService.getUserIDFromJWT(token);
             int userAttendanceCnt = userService.findUserAttendanceCntByUserID(userID);
             int canAmount = canService.getCanAmountByAccountID(accountID);
 
