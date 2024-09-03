@@ -21,8 +21,6 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class AttendancePostsService {
-    //생성자 말고 setter 메소드를 만들어서 자동 호출
-    //Autowired, setter 메소드, 생성자 중 골라야 함 -> setter가 보안상 좋음
     private final AttendancePostsRepository attendancePostsRepository;
     private final UserRepository userRepository;
     private final OpenAIService openAIService;
