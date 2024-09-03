@@ -21,4 +21,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Modifying
     @Query("UPDATE User u SET u.userHasCan = :hasCan WHERE u.userID = :userID")
     void updateUserHasCanById(@Param("userID") Long userID, @Param("hasCan") Boolean hasCan);
+
+    // 작성 글 개수 업데이터
+    @Modifying
+    @Query("UPDATE User u SET u.userAttendanceCnt = :updatedAttendancePostCnt WHERE u.userID = :userID")
+    void updateUserAttendanceCnt(@Param("userID") Long userID, @Param("updatedAttendancePostCnt") int updatedAttendancePostCnt);
 }

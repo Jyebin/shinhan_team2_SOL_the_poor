@@ -36,9 +36,8 @@ public class AttendancePostsController {
         if (token == null) {
             return new ResponseEntity<>(new String[0], HttpStatus.UNAUTHORIZED);
         }
-
         try {
-            Long userId = oAuth2UserService.getUserID(token);
+            Long userId = oAuth2UserService.getUserIDFromJWT(token);
             attendancePostsRequestDTO.setUserId(userId);
             String[] responseContent = attendancePostsService.createPost(attendancePostsRequestDTO);
             return new ResponseEntity<>(responseContent, HttpStatus.CREATED);
@@ -51,7 +50,7 @@ public class AttendancePostsController {
     public ResponseEntity<?> viewAttendance(HttpServletRequest request) {
         try {
             String token = oAuth2UserService.getJWTFromCookies(request);
-            Long userID = oAuth2UserService.getUserID(token);
+            Long userID = oAuth2UserService.getUserIDFromJWT(token);
             Optional<List<AttendancePostResponseDTO>> userPostList = attendancePostsService.getAttendancePostList(
                     userID);
 

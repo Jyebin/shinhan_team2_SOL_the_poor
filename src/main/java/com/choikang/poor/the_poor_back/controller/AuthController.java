@@ -21,7 +21,6 @@ public class AuthController {
     @GetMapping("/oauth2/kakao")
     public ResponseEntity<String> kakaoCallback(@RequestParam("code") String code, HttpServletResponse response) throws Exception {
         String jwtToken = oAuth2UserService.kakaoLogin(code);
-        System.out.println(jwtToken);
 
         // JWT를 쿠키에 저장
         Cookie cookie = new Cookie("token",  jwtToken);
@@ -46,10 +45,25 @@ public class AuthController {
         if(token != null){
             oAuth2UserService.kakaoLogout(token);
             response.addCookie(oAuth2UserService.deleteJWTFromCookie());
-
+            return ResponseEntity.ok().build();
         }
-        return ResponseEntity.ok().build();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
 
+    @GetMapping("/validate")
+    public ResponseEntity<Object> validateToken(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        try {
+            String jwtToken = oAuth2UserService.validateTokenAndRegenerate(request);
 
+            // JWT를 쿠키에 저장
+            Cookie cookie = new Cookie("token", jwtToken);
+            cookie.setHttpOnly(true);
+            cookie.setPath("/");
+            response.addCookie(cookie);
+
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("토큰 검증 실패" + e.getMessage());
+        }
+    }
 }
