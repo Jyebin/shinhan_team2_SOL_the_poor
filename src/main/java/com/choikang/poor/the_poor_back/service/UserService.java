@@ -14,8 +14,7 @@ public class UserService {
     private final UserRepository userRepository;
 
     public Boolean findUserHasCanByUserID(Long userID) {
-        Optional<User> user = userRepository.findById(userID);
-        return user.map(User::isUserHasCan).orElse(false);
+        return userRepository.findUserHasCanByUserID(userID);
     }
 
     public UserDTO getUserByID(Long userID) {

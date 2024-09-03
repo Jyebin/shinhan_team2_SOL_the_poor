@@ -6,7 +6,6 @@ import com.choikang.poor.the_poor_back.service.banking.AccountService;
 import com.choikang.poor.the_poor_back.service.OAuth2UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,9 +22,8 @@ public class AccountController {
     private final AccountService accountService;
     private final OAuth2UserService authService;
 
-    // 계좌 리스트 조회
     @GetMapping("/list")
-    public ResponseEntity<?> getAccountList(HttpServletRequest request) {
+    public ResponseEntity<?> getAccountsList(HttpServletRequest request) {
         String token = authService.getJWTFromCookies(request);
         if (token == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("토큰이 존재하지 않습니다.");

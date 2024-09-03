@@ -5,13 +5,14 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
-@Repository
 public interface UserRepository extends JpaRepository<User, Long> {
+
+    @Query("select u.userHasCan from User u where u.userID = :userID")
+    Boolean findUserHasCanByUserID(Long userID);
 
     // 이메일을 통한 사용자 조회
     Optional<User> findByUserEmail(String userEmail);
