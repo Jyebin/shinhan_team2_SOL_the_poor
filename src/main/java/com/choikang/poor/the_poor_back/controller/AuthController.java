@@ -10,11 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.HashMap;
-import java.util.Map;
 
-
-@CrossOrigin(origins = {"http://localhost:3000/", "http://localhost/"}) // 리액트에서 호출할 것이므로 리엑트의 url과 함께 작성
+@CrossOrigin(origins = {"http://localhost:3000/","http://localhost/"}) // 리액트에서 호출할 것이므로 리엑트의 url과 함께 작성
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
@@ -26,7 +23,7 @@ public class AuthController {
         String jwtToken = oAuth2UserService.kakaoLogin(code);
 
         // JWT를 쿠키에 저장
-        Cookie cookie = new Cookie("token", jwtToken);
+        Cookie cookie = new Cookie("token",  jwtToken);
         cookie.setHttpOnly(true);
         cookie.setPath("/");
         response.addCookie(cookie);
@@ -42,10 +39,10 @@ public class AuthController {
 
 
     @GetMapping("/logout")
-    public ResponseEntity<Object> logout(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public ResponseEntity<Object> logout(HttpServletRequest request, HttpServletResponse response) throws Exception{
         String token = oAuth2UserService.getJWTFromCookies(request);
 
-        if (token != null) {
+        if(token != null){
             oAuth2UserService.kakaoLogout(token);
             response.addCookie(oAuth2UserService.deleteJWTFromCookie());
             return ResponseEntity.ok().build();

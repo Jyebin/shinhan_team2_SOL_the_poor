@@ -195,17 +195,17 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
     private String generateUniqueAccountNumber() {
         String accountNumber;
         do {
-            accountNumber = "110-" + (int) (Math.random() * 900 + 100) + "-" + (int) (Math.random() * 9000 + 1000);
+            accountNumber = "110-" + (int)(Math.random() * 900 + 100) + "-" + (int)(Math.random() * 9000 + 1000);
         } while (accountRepository.findByAccountNumber(accountNumber).isPresent());
 
         return accountNumber;
     }
 
     // 쿠키로 부터 JWT 값 가져오기
-    public String getJWTFromCookies(HttpServletRequest request) {
+    public String getJWTFromCookies(HttpServletRequest request){
         String token = null;
-        for (Cookie cookie : request.getCookies()) {
-            if (cookie.getName().equals("token")) {
+        for(Cookie cookie : request.getCookies()){
+            if(cookie.getName().equals("token")){
                 token = cookie.getValue();
             }
         }
@@ -213,7 +213,7 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
     }
 
     // 쿠키 삭제
-    public Cookie deleteJWTFromCookie() {
+    public Cookie deleteJWTFromCookie(){
         Cookie cookie = new Cookie("token", null);
         cookie.setPath("/");
         cookie.setHttpOnly(true);
@@ -276,7 +276,7 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
 
         ResponseEntity<Map> response = restTemplate.exchange(logoutUrl, HttpMethod.GET, requestEntity, Map.class);
 
-        if (!response.getStatusCode().is2xxSuccessful()) {
+        if(!response.getStatusCode().is2xxSuccessful()){
             throw new RuntimeException("Failed logout from kakao");
         }
     }
