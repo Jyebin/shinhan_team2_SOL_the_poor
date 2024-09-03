@@ -8,6 +8,7 @@ import com.choikang.poor.the_poor_back.repository.UserRepository;
 import com.choikang.poor.the_poor_back.security.util.JWTUtil;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -194,17 +195,17 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
     private String generateUniqueAccountNumber() {
         String accountNumber;
         do {
-            accountNumber = "110-" + (int)(Math.random() * 900 + 100) + "-" + (int)(Math.random() * 9000 + 1000);
+            accountNumber = "110-" + (int) (Math.random() * 900 + 100) + "-" + (int) (Math.random() * 9000 + 1000);
         } while (accountRepository.findByAccountNumber(accountNumber).isPresent());
 
         return accountNumber;
     }
 
     // 쿠키로 부터 JWT 값 가져오기
-    public String getJWTFromCookies(HttpServletRequest request){
+    public String getJWTFromCookies(HttpServletRequest request) {
         String token = null;
-        for(Cookie cookie : request.getCookies()){
-            if(cookie.getName().equals("token")){
+        for (Cookie cookie : request.getCookies()) {
+            if (cookie.getName().equals("token")) {
                 token = cookie.getValue();
             }
         }
@@ -212,7 +213,7 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
     }
 
     // 쿠키 삭제
-    public Cookie deleteJWTFromCookie(){
+    public Cookie deleteJWTFromCookie() {
         Cookie cookie = new Cookie("token", null);
         cookie.setPath("/");
         cookie.setHttpOnly(true);
@@ -239,15 +240,25 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
     }
 
     // JWT로부터 user access token 가져오기
-    public String getUserAccessTokenFromJWT(String token) throws Exception{
+    public String getUserAccessTokenFromJWT(String token) throws Exception {
         return getUserInfo(token).split(":")[1];
     }
 
     // JWT가 유효한지 검사하고 만일 만료되었을 시 재발급 하기
-    public String validateTokenAndRegenerate(HttpServletRequest request) throws Exception{
+    public String validateTokenAndRegenerate(HttpServletRequest request) throws Exception {
         String token = getJWTFromCookies(request);
-        if(jwtUtil.isTokenExpired(token)){
-            token = jwtUtil.refreshToken(token);
+        try {
+            if (jwtUtil.isTokenExpired(token)) {
+                String newToken = jwtUtil.refreshToken(token);
+                return newToken;
+            }
+        } catch (ExpiredJwtException e) {
+            try {
+                String newToken = jwtUtil.refreshToken(token);
+                return newToken;
+            } catch (Exception ex) {
+                throw new Exception("Token validation failed", ex);
+            }
         }
         return token;
     }
@@ -265,7 +276,7 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
 
         ResponseEntity<Map> response = restTemplate.exchange(logoutUrl, HttpMethod.GET, requestEntity, Map.class);
 
-        if(!response.getStatusCode().is2xxSuccessful()){
+        if (!response.getStatusCode().is2xxSuccessful()) {
             throw new RuntimeException("Failed logout from kakao");
         }
     }

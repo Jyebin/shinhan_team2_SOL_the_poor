@@ -31,7 +31,6 @@ public class APICheckFilter extends OncePerRequestFilter {
 
         if (antPathMatcher.match(pattern, request.getRequestURI())) {
             boolean checkHeader = checkAuthHeader(request);
-
             if (!checkHeader) {
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
                 return;
