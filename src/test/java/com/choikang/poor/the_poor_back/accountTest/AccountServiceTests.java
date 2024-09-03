@@ -102,4 +102,16 @@ public class AccountServiceTests {
         int testAmount = accountService.getCanAmountByAccountID(1L);
         Assertions.assertEquals(amount, testAmount);
     }
+
+    @Test
+    @DisplayName("깡통 해지 테스트")
+    public void canTerminationTest() {
+
+    }
+
+    @Test
+    @DisplayName("깡통 가입 테스트")
+    public void canRegisterTest() {
+
+    }
 }
