@@ -2,6 +2,7 @@ package com.choikang.poor.the_poor_back.controller.banking;
 
 import com.choikang.poor.the_poor_back.dto.TransactionDTO;
 import com.choikang.poor.the_poor_back.service.banking.TransactionService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,9 +15,9 @@ import java.util.List;
 @CrossOrigin(origins = {"http://localhost:3000", "http://localhost"})
 @RestController
 @RequestMapping("/api/transaction")
+@RequiredArgsConstructor
 public class TransactionController {
-    @Autowired
-    TransactionService transactionService;
+    private final TransactionService transactionService;
 
     // 거래내역 조회
     @GetMapping("/list")

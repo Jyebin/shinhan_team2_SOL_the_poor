@@ -5,6 +5,7 @@ import com.choikang.poor.the_poor_back.service.OAuth2UserService;
 import com.choikang.poor.the_poor_back.service.UserService;
 import com.choikang.poor.the_poor_back.service.banking.CanService;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,15 +19,11 @@ import java.util.Map;
 @CrossOrigin(origins = {"http://localhost:3000", "http://localhost"})
 @RestController
 @RequestMapping("/api/can")
+@RequiredArgsConstructor
 public class CanController {
-    @Autowired
-    OAuth2UserService authService;
-
-    @Autowired
-    UserService userService;
-
-    @Autowired
-    CanService canService;
+    private final OAuth2UserService authService;
+    private final UserService userService;
+    private final CanService canService;
 
     // 깡통 조회
     @GetMapping("/balance")

@@ -5,6 +5,7 @@ import com.choikang.poor.the_poor_back.model.Account;
 import com.choikang.poor.the_poor_back.service.banking.AccountService;
 import com.choikang.poor.the_poor_back.service.OAuth2UserService;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,13 +18,10 @@ import lombok.extern.slf4j.Slf4j;
 @CrossOrigin(origins = {"http://localhost:3000", "http://localhost"})
 @RestController
 @RequestMapping("/api/account")
+@RequiredArgsConstructor
 public class AccountController {
-
-    @Autowired
-    private AccountService accountService;
-
-    @Autowired
-    private OAuth2UserService authService;
+    private final AccountService accountService;
+    private final OAuth2UserService authService;
 
     // 계좌 리스트 조회
     @GetMapping("/list")

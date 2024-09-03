@@ -4,17 +4,16 @@ import com.choikang.poor.the_poor_back.model.Account;
 import com.choikang.poor.the_poor_back.model.User;
 import com.choikang.poor.the_poor_back.repository.AccountRepository;
 import com.choikang.poor.the_poor_back.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class CanService {
-    @Autowired
-    private AccountRepository accountRepository;
-    @Autowired
-    private UserRepository userRepository; // UserRepository 추가
+    private final AccountRepository accountRepository;
+    private final UserRepository userRepository;
 
     // Can 잔액 가져와서 보여주기
     public int getCanAmountByAccountID(Long accountID) {
