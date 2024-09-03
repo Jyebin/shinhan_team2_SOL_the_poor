@@ -9,7 +9,9 @@ import com.choikang.poor.the_poor_back.repository.AttendancePostsRepository;
 import com.choikang.poor.the_poor_back.repository.UserRepository;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -27,6 +29,18 @@ public class AttendancePostsService {
     @Autowired
     private OpenAIService openAIService;
 
+    private static final Map<String, Integer> attendanceTypeMap = new HashMap<>();
+
+    private static final String TYPE_OVRSPENDING = "'과소비'";
+    private static final String TYPE_SAVING = "'절약'";
+    private static final String TYPE_UNDETERMINED = "'판단안됨'";
+
+    static {
+        attendanceTypeMap.put(TYPE_OVRSPENDING, 1);
+        attendanceTypeMap.put(TYPE_SAVING, 2);
+        attendanceTypeMap.put(TYPE_UNDETERMINED, 3);
+    }
+
     public String[] createPost(AttendancePostsRequestDTO postsDTO) {
 
         User user = userRepository.findById(postsDTO.getUserId())
@@ -38,7 +52,7 @@ public class AttendancePostsService {
         String responseType = responseArr[0];
         int attendanceType = determineAttendanceType(responseArr[0]);
         String responseContent = responseArr[1];
-        if(!responseType.equals("'판단안됨'")){
+        if (!responseType.equals("'판단안됨'")) {
             AttendancePosts attendancePosts = AttendancePosts.builder()
                     .user(user)
                     .attendanceDate(LocalDateTime.now())
@@ -48,10 +62,7 @@ public class AttendancePostsService {
             attendancePostsRepository.save(attendancePosts);
         }
 
-        String[] responses = new String[2];
-        responses[0] = responseType;
-        responses[1] = responseContent;
-        return responses;
+        return new String[]{responseType, responseContent};
     }
 
     private OpenAIRequestDTO createOpenAIRequest(String content) {
@@ -74,22 +85,11 @@ public class AttendancePostsService {
     }
 
     private int determineAttendanceType(String attendanceType) {
-        int answer = 0;
-        switch (attendanceType) {
-            case "'과소비'":
-                answer = 1;
-                break;
-            case "'절약'":
-                answer = 2;
-                break;
-            case "'판단안됨'":
-                answer = 3;
-                break;
-        }
-        return answer;
+        return attendanceTypeMap.getOrDefault(attendanceType, 0);
     }
 
-    public Optional<List<AttendancePostResponseDTO>> getAttendancePostList (Long userID){
+
+    public Optional<List<AttendancePostResponseDTO>> getAttendancePostList(Long userID) {
         List<AttendancePostResponseDTO> posts = attendancePostsRepository.findByUserUserID(userID)
                 .stream()
                 .map(post -> {
@@ -101,13 +101,10 @@ public class AttendancePostsService {
                 })
                 .collect(Collectors.toList());
 
-        return Optional.ofNullable(posts);
+        return Optional.of(posts);
     }
 
-    public String switchPostTypeFromNumToWord(int typeNum){
-        if(typeNum == 1){
-            return "overspending";
-        }
-        return "saving";
+    public String switchPostTypeFromNumToWord(int typeNum) {
+        return typeNum == 1 ? "overspending" : "saving";
     }
 }
