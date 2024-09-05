@@ -21,7 +21,7 @@ public class UserService {
         Optional<User> user = userRepository.findById(userID);
         if (user.isPresent()) {
             User u = user.get();
-            return new UserDTO(u.getUserID(), u.getUserName(), u.getUserEmail(), u.isUserHasCan());
+            return new UserDTO(u.getUserID(), u.getUserName(), u.getUserEmail(), u.isUserHasCan(), u.getUserLeagueKind());
         } else {
             throw new RuntimeException("User not found with ID: " + userID);
         }
