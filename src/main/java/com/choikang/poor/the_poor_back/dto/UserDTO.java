@@ -12,4 +12,8 @@ public class UserDTO {
     private String userName;
     private String userEmail;
     private Boolean userHasCan;
+    private int userAttendanceCnt;
+    private String userCode;
+    private int userFollower;
+    private int userFollowing;
 }

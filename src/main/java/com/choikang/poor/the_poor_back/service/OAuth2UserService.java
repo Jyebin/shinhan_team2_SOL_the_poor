@@ -153,10 +153,15 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
         if (existingUser.isPresent()) {
             return existingUser.get();
         } else {
+            // email에서 userCode 받아오기
+            String[] parts = kakaoUserDTO.getEmail().split("@");
+            String userCode = parts[0];
+
             // 새로운 사용자 생성
             User newUser = User.builder()
                     .userName(kakaoUserDTO.getName())
                     .userEmail(kakaoUserDTO.getEmail())
+                    .userCode(userCode)
                     .build();
             User savedUser = userRepository.save(newUser);
 

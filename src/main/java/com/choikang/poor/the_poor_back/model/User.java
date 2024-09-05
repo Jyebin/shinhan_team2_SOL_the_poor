@@ -26,6 +26,15 @@ public class User {
     @Column(nullable = false)
     private boolean userHasCan;
 
+    @Column(length = 30, nullable = false)
+    private String userCode;
+
+    @Column(nullable = false)
+    private int userFollower;
+
+    @Column(nullable = false)
+    private int userFollowing;
+
     public void setUserHasCan(boolean userHasCan) {
         this.userHasCan = userHasCan;
     }
