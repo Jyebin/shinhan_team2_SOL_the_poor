@@ -18,7 +18,7 @@ public class RankingRepositoryTests {
     @Test
     @DisplayName("랭킹 정보 더미 데이터 삽입")
     public void insertDummies() {
-        for(int i = 0; i < 50; i++){
+        for(int i = 50; i < 101; i++){
             Ranking ranking = Ranking.builder()
                     .rankingUserID((long) i)
                     .rankingUserName("사용자 이름" + i)

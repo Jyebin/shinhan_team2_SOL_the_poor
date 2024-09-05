@@ -15,7 +15,7 @@ public class Ranking {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long rankingID;
 
-    @Column
+    @Column(unique = true)
     private Long rankingUserID;
 
     @Column

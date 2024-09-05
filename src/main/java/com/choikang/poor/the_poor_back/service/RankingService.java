@@ -12,9 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -32,7 +30,7 @@ public class RankingService {
             List<RankingDTO> rankingList = getRankingDTOs(rankingRepository.findByRankingLeagueKindOrderByRankingScoreDesc(userID));
 
             if (rankingList.isEmpty()) {
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
             }
 
             String leagueKind = getUserLeagueKind(userID);
@@ -43,6 +41,7 @@ public class RankingService {
             RankingResponseDTO rankingResponseDTO = RankingResponseDTO.builder()
                     .rankingDTOList(rankingList)
                     .leagueKind(leagueKind)
+                    .rankingUserID((int)userID)
                     .build();
 
             return new ResponseEntity<>(rankingResponseDTO, HttpStatus.OK);

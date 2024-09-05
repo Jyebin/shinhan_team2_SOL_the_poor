@@ -11,6 +11,7 @@ import lombok.*;
 @NoArgsConstructor
 public class RankingDTO {
     private int rankingNum;
+    private int rankingUserNum;
     private String rankingUserName;
     private int rankingScore;
     private int userTotalScore;

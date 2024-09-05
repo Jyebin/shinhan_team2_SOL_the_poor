@@ -12,4 +12,5 @@ import java.util.List;
 public class RankingResponseDTO {
     private List<RankingDTO> rankingDTOList;
     private String leagueKind;
+    private int rankingUserID;
 }
