@@ -1,8 +1,10 @@
 package com.choikang.poor.the_poor_back.service.banking;
 
 import com.choikang.poor.the_poor_back.model.Account;
+import com.choikang.poor.the_poor_back.model.Ranking;
 import com.choikang.poor.the_poor_back.model.User;
 import com.choikang.poor.the_poor_back.repository.AccountRepository;
+import com.choikang.poor.the_poor_back.repository.RankingRepository;
 import com.choikang.poor.the_poor_back.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,6 +16,7 @@ import java.util.Optional;
 public class CanService {
     private final AccountRepository accountRepository;
     private final UserRepository userRepository;
+    private final RankingRepository rankingRepository;
 
     // Can 잔액 가져와서 보여주기
     public int getCanAmountByAccountID(Long accountID) {
@@ -32,7 +35,23 @@ public class CanService {
             // User 정보 업데이트
             User user = account.getUser();
             user.setUserHasCan(true);
+            user.setUserLeagueKind(1);
             userRepository.save(user);
+
+            enterLeague(user);
+        }
+    }
+
+    // 깡통 적금 가입시 리그 참여
+    public void enterLeague(User user){
+        if(rankingRepository.findRankingByRankingUserID(user.getUserID()) == null){
+            Ranking ranking = Ranking.builder()
+                    .rankingUserName(user.getUserName())
+                    .rankingScore(0)
+                    .userTotalScore(user.getUserTotalScore())
+                    .rankingLeagueKind(user.getUserLeagueKind())
+                    .build();
+            rankingRepository.save(ranking);
         }
     }
 

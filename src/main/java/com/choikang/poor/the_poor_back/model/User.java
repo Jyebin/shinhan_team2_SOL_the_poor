@@ -27,13 +27,17 @@ public class User {
     @Column(nullable = false)
     private boolean userHasCan;
 
-    @Column
+    @ColumnDefault("1")
     private int userLeagueKind;
 
-    @ColumnDefault("1")
-    private long userTotalScore;
+    @Column
+    private int userTotalScore;
 
     public void setUserHasCan(boolean userHasCan) {
         this.userHasCan = userHasCan;
+    }
+
+    public void setUserLeagueKind(int leagueKind){
+        this.userLeagueKind = leagueKind;
     }
 }

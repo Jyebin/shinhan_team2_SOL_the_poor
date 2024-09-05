@@ -1,6 +1,7 @@
 package com.choikang.poor.the_poor_back.service;
 
 import com.choikang.poor.the_poor_back.dto.RankingDTO;
+import com.choikang.poor.the_poor_back.dto.RankingResponseDTO;
 import com.choikang.poor.the_poor_back.model.Ranking;
 import com.choikang.poor.the_poor_back.repository.RankingRepository;
 import com.choikang.poor.the_poor_back.repository.UserRepository;
@@ -26,6 +27,7 @@ public class RankingService {
 
     public ResponseEntity<?> getAllUserRanking(HttpServletRequest request) {
         try {
+            // 사용자가 속한 리그의 정보 가져오기
             long userID = oAuth2UserService.getUserIDFromJWT(oAuth2UserService.getJWTFromCookies(request));
             List<RankingDTO> rankingList = getRankingDTOs(rankingRepository.findByRankingLeagueKindOrderByRankingScoreDesc(userID));
 
@@ -38,10 +40,12 @@ public class RankingService {
                 return new ResponseEntity<>("Invalid league kind", HttpStatus.BAD_REQUEST);
             }
 
-            Map<String, List<RankingDTO>> responseMap = new HashMap<>();
-            responseMap.put(leagueKind, rankingList);
+            RankingResponseDTO rankingResponseDTO = RankingResponseDTO.builder()
+                    .rankingDTOList(rankingList)
+                    .leagueKind(leagueKind)
+                    .build();
 
-            return new ResponseEntity<>(responseMap, HttpStatus.OK);
+            return new ResponseEntity<>(rankingResponseDTO, HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>("서버 오류가 발생했습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
