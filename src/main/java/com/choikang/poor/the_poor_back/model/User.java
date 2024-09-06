@@ -2,6 +2,7 @@ package com.choikang.poor.the_poor_back.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
 @Entity
 @Getter
@@ -35,7 +36,17 @@ public class User {
     @Column(nullable = false)
     private int userFollowing;
 
+    @ColumnDefault("1")
+    private int userLeagueKind;
+
+    @Column
+    private int userTotalScore;
+
     public void setUserHasCan(boolean userHasCan) {
         this.userHasCan = userHasCan;
+    }
+
+    public void setUserLeagueKind(int leagueKind){
+        this.userLeagueKind = leagueKind;
     }
 }

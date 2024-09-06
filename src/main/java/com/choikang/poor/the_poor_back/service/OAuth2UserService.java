@@ -1,6 +1,7 @@
 package com.choikang.poor.the_poor_back.service;
 
 import com.choikang.poor.the_poor_back.dto.KakaoUserDTO;
+import com.choikang.poor.the_poor_back.dto.UserDTO;
 import com.choikang.poor.the_poor_back.model.Account;
 import com.choikang.poor.the_poor_back.model.User;
 import com.choikang.poor.the_poor_back.repository.AccountRepository;

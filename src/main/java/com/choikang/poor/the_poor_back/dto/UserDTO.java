@@ -18,4 +18,5 @@ public class UserDTO {
     private String userCode;
     private int userFollower;
     private int userFollowing;
+    private int userLeagueKind;
 }
