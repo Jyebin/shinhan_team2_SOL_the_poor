@@ -1,5 +1,6 @@
 package com.choikang.poor.the_poor_back.service;
 
+import com.choikang.poor.the_poor_back.dto.FollowDTO;
 import com.choikang.poor.the_poor_back.dto.FollowResponseDTO;
 import com.choikang.poor.the_poor_back.repository.FollowRepository;
 import lombok.RequiredArgsConstructor;
@@ -15,4 +16,8 @@ public class FollowService {
 //    public List<FollowResponseDTO> getFollowingList() {
 //
 //    }
+
+    public void updateFollow(FollowDTO followDTO) {
+
+    }
 }

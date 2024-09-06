@@ -6,4 +6,5 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface FollowRepository extends JpaRepository<Follow, Long> {
 
+
 }

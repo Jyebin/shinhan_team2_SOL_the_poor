@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
@@ -27,4 +28,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Modifying
     @Query("UPDATE User u SET u.userAttendanceCnt = :updatedAttendancePostCnt WHERE u.userID = :userID")
     void updateUserAttendanceCnt(@Param("userID") Long userID, @Param("updatedAttendancePostCnt") int updatedAttendancePostCnt);
+
+    List<User> findByUserCode(String userCode);
 }

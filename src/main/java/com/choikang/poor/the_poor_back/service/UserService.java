@@ -6,7 +6,9 @@ import com.choikang.poor.the_poor_back.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -35,5 +37,19 @@ public class UserService {
         } else {
             throw new IllegalArgumentException("유효하지 않은 사용자 ID입니다: " + userID);
         }
+    }
+
+    // userCode로 user 목록 조회
+    public List<UserDTO> findUserByUserCode(String userCode) {
+        List<User> userList = userRepository.findByUserCode(userCode);
+        List<UserDTO> userDTOs = userList.stream()
+                .map(user ->  UserDTO.builder()
+                        .userID(user.getUserID())
+                        .userName(user.getUserName())
+                        .userCode(user.getUserCode())
+                        .build()
+                )
+                .collect(Collectors.toList());
+        return userDTOs;
     }
 }
