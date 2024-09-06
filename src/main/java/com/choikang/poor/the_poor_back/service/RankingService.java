@@ -27,7 +27,7 @@ public class RankingService {
         try {
             // 사용자가 속한 리그의 정보 가져오기
             long userID = oAuth2UserService.getUserIDFromJWT(oAuth2UserService.getJWTFromCookies(request));
-            List<RankingDTO> rankingList = getRankingDTOs(rankingRepository.findByRankingLeagueKindOrderByRankingScoreDesc(userID));
+            List<RankingDTO> rankingList = getRankingDTOs(rankingRepository.findByRankingLeagueKindOrderByRankingMonthScoreDesc(userID));
 
             if (rankingList.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -81,8 +81,8 @@ public class RankingService {
         return RankingDTO.builder()
                 .rankingNum(rankingNum)
                 .rankingUserName(ranking.getRankingUserName())
-                .rankingScore(ranking.getRankingScore())
-                .userTotalScore(ranking.getUserTotalScore())
+                .rankingScore(ranking.getRankingMonthScore())
+                .userTotalScore(ranking.getRankingUserTotalScore())
                 .build();
     }
 }

@@ -6,6 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface RankingRepository extends JpaRepository<Ranking, Long> {
-    List<Ranking> findByRankingLeagueKindOrderByRankingScoreDesc(long userID);
+    List<Ranking> findByRankingLeagueKindOrderByRankingMonthScoreDesc(long userID);
     Ranking findRankingByRankingUserID(long userID);
 }
