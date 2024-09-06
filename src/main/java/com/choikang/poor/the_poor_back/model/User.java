@@ -39,7 +39,7 @@ public class User {
     @ColumnDefault("1")
     private int userLeagueKind;
 
-    @Column
+    @ColumnDefault("0")
     private int userTotalScore;
 
     public void setUserHasCan(boolean userHasCan) {

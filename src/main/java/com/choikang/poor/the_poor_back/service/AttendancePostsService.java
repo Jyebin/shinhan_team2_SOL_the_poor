@@ -17,8 +17,10 @@ import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class AttendancePostsService {
     private final AttendancePostsRepository attendancePostsRepository;
@@ -57,8 +59,8 @@ public class AttendancePostsService {
                     .attendanceContent(postsDTO.getMessage())
                     .build();
             attendancePostsRepository.save(attendancePosts);
+            plusUserAttendanceCnt(user.getUserID());
         }
-
         String[] responses = new String[2];
         responses[0] = responseType;
         responses[1] = responseContent;
@@ -106,4 +108,18 @@ public class AttendancePostsService {
     public String switchPostTypeFromNumToWord(int typeNum) {
         return typeNum == 1 ? "overspending" : "saving";
     }
+
+    // 글 작성 시 유저 DB의 총 작성 글 수 업데이트
+    @Transactional
+    public void plusUserAttendanceCnt(Long userID) {
+        try {
+            int attendancePostCnt = attendancePostsRepository.countAllByUserUserID(userID);
+            userRepository.updateUserAttendanceCnt(userID, attendancePostCnt);
+            System.out.println("여기 실행되나? (3)");
+        } catch (Exception e) {
+            System.err.println("에러 발생: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
 }
