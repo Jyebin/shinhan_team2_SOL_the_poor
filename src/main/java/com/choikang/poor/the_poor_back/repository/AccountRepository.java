@@ -32,7 +32,7 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
             " a.accountCanAmount = 0" +
             " WHERE a.accountID = :accountID")
     @Transactional
-    void updateBalanceAndResetCanAmount(@Param("accountID") Long accountID);
+    int updateBalanceAndResetCanAmount(@Param("accountID") Long accountID);
 
     Optional<Account> findByAccountNumber(String accountNumber);
 

@@ -2,6 +2,7 @@ package com.choikang.poor.the_poor_back.service.banking;
 
 import com.choikang.poor.the_poor_back.model.Account;
 import com.choikang.poor.the_poor_back.model.Ranking;
+import com.choikang.poor.the_poor_back.model.Transaction;
 import com.choikang.poor.the_poor_back.model.User;
 import com.choikang.poor.the_poor_back.repository.AccountRepository;
 import com.choikang.poor.the_poor_back.repository.RankingRepository;
@@ -75,13 +76,18 @@ public class CanService {
 
                 redirectURL = "/myAccount";
             }
-            accountRepository.updateBalanceAndResetCanAmount(accountID);
         }
         return redirectURL;
     }
 
     private void terminateCanByAccountID(Long accountID) {
-        // 깡통 해지 관련 비즈니스 로직
+        // balance 받아오기 (update후 거래 내역에 추가해야 하기 때문)
+
+        int balance = accountRepository.updateBalanceAndResetCanAmount(accountID);
+        //  + 거래 내역에 돈 입금 된 거 추가하기
+        Account account = Account.builder().accountID(accountID).build();
+
+
     }
 
 }
