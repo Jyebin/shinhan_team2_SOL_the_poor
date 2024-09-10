@@ -6,10 +6,12 @@ import com.choikang.poor.the_poor_back.model.Transaction;
 import com.choikang.poor.the_poor_back.model.User;
 import com.choikang.poor.the_poor_back.repository.AccountRepository;
 import com.choikang.poor.the_poor_back.repository.RankingRepository;
+import com.choikang.poor.the_poor_back.repository.TransactionRepository;
 import com.choikang.poor.the_poor_back.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -18,6 +20,7 @@ public class CanService {
     private final AccountRepository accountRepository;
     private final UserRepository userRepository;
     private final RankingRepository rankingRepository;
+    private final TransactionRepository transactionRepository;
 
     // Can 잔액 가져와서 보여주기
     public int getCanAmountByAccountID(Long accountID) {
@@ -81,13 +84,21 @@ public class CanService {
     }
 
     private void terminateCanByAccountID(Long accountID) {
-        // balance 받아오기 (update후 거래 내역에 추가해야 하기 때문)
-
-        int balance = accountRepository.updateBalanceAndResetCanAmount(accountID);
+        // balance 받아오기 (update후 거래 내역에 추가해야 하기 때문
+        int balance = accountRepository.findCanAmountByAccountID(accountID);
+        int amount = accountRepository.findAmountByAccountID(accountID);
+        accountRepository.updateBalanceAndResetCanAmount(accountID);
         //  + 거래 내역에 돈 입금 된 거 추가하기
         Account account = Account.builder().accountID(accountID).build();
-
-
+        Transaction transaction = Transaction.builder()
+                .account(account)
+                .transactionIsDeposit(true)
+                .transactionDate(LocalDateTime.now())
+                .transactionMoney(balance)
+                .transactionName("깡통")
+                .transactionBalance(amount)
+                .build();
+        transactionRepository.save(transaction);
     }
 
 }
