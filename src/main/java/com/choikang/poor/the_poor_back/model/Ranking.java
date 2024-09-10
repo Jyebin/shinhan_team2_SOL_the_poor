@@ -22,10 +22,10 @@ public class Ranking {
     private String rankingUserName;
 
     @Column
-    private int rankingScore;
+    private int rankingMonthScore;
 
     @Column
-    private int userTotalScore;
+    private int rankingUserTotalScore;
 
     @ColumnDefault("1")
     private int rankingLeagueKind;

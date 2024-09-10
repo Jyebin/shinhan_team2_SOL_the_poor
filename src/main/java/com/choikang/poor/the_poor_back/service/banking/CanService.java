@@ -51,8 +51,8 @@ public class CanService {
         if(rankingRepository.findRankingByRankingUserID(user.getUserID()) == null){
             Ranking ranking = Ranking.builder()
                     .rankingUserName(user.getUserName())
-                    .rankingScore(0)
-                    .userTotalScore(user.getUserTotalScore())
+                    .rankingMonthScore(0)
+                    .rankingUserTotalScore(user.getUserTotalScore())
                     .rankingLeagueKind(user.getUserLeagueKind())
                     .build();
             rankingRepository.save(ranking);

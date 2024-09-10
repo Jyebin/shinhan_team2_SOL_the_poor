@@ -4,7 +4,6 @@ import com.choikang.poor.the_poor_back.dto.RankingDTO;
 import com.choikang.poor.the_poor_back.dto.RankingResponseDTO;
 import com.choikang.poor.the_poor_back.model.Ranking;
 import com.choikang.poor.the_poor_back.repository.RankingRepository;
-import com.choikang.poor.the_poor_back.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -27,7 +26,9 @@ public class RankingService {
         try {
             // 사용자가 속한 리그의 정보 가져오기
             long userID = oAuth2UserService.getUserIDFromJWT(oAuth2UserService.getJWTFromCookies(request));
-            List<RankingDTO> rankingList = getRankingDTOs(rankingRepository.findByRankingLeagueKindOrderByRankingScoreDesc(userID));
+            int leagueKindValue = userService.getUserByID(userID).getUserLeagueKind();
+
+            List<RankingDTO> rankingList = getRankingDTOs(rankingRepository.findByRankingLeagueKindOrderByRankingMonthScoreDesc(leagueKindValue));
 
             if (rankingList.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -51,6 +52,22 @@ public class RankingService {
         }
     }
 
+    public ResponseEntity<?>  getRankingDataByLeague(String leagueKind) {
+        // 리그 이름에 맞는 데이터를 DB에서 가져옴
+        int leagueKindCode = convertLeagueKindToCode(leagueKind);
+        List<RankingDTO> rankingList = getRankingDTOs(rankingRepository.findByRankingLeagueKindOrderByRankingMonthScoreDesc(leagueKindCode));
+        if (rankingList.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        RankingResponseDTO rankingResponseDTO = RankingResponseDTO.builder()
+                .rankingDTOList(rankingList)
+                .leagueKind(leagueKind)
+                .build();
+
+        return new ResponseEntity<>(rankingResponseDTO, HttpStatus.OK);
+    }
+
     private String getUserLeagueKind(long userID) {
         int leagueKindValue = userService.getUserByID(userID).getUserLeagueKind();
         switch (leagueKindValue) {
@@ -60,6 +77,17 @@ public class RankingService {
             case 4: return "platinum";
             case 5: return "dia";
             default: return null;
+        }
+    }
+
+    private int convertLeagueKindToCode(String leagueKind) {
+        switch (leagueKind.toLowerCase()) {
+            case "bronze": return 1;
+            case "silver": return 2;
+            case "gold": return 3;
+            case "platinum": return 4;
+            case "dia": return 5;
+            default: throw new IllegalArgumentException("Invalid league kind");
         }
     }
 
@@ -80,9 +108,10 @@ public class RankingService {
     private RankingDTO rankingDTO(Ranking ranking, int rankingNum) {
         return RankingDTO.builder()
                 .rankingNum(rankingNum)
+                .rankingUserNum(ranking.getRankingUserID())
                 .rankingUserName(ranking.getRankingUserName())
-                .rankingScore(ranking.getRankingScore())
-                .userTotalScore(ranking.getUserTotalScore())
+                .rankingScore(ranking.getRankingMonthScore())
+                .userTotalScore(ranking.getRankingUserTotalScore())
                 .build();
     }
 }
