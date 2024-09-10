@@ -1,12 +1,17 @@
 package com.choikang.poor.the_poor_back.service.banking;
 
 import com.choikang.poor.the_poor_back.model.Account;
+import com.choikang.poor.the_poor_back.model.Ranking;
+import com.choikang.poor.the_poor_back.model.Transaction;
 import com.choikang.poor.the_poor_back.model.User;
 import com.choikang.poor.the_poor_back.repository.AccountRepository;
+import com.choikang.poor.the_poor_back.repository.RankingRepository;
+import com.choikang.poor.the_poor_back.repository.TransactionRepository;
 import com.choikang.poor.the_poor_back.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -14,6 +19,8 @@ import java.util.Optional;
 public class CanService {
     private final AccountRepository accountRepository;
     private final UserRepository userRepository;
+    private final RankingRepository rankingRepository;
+    private final TransactionRepository transactionRepository;
 
     // Can 잔액 가져와서 보여주기
     public int getCanAmountByAccountID(Long accountID) {
@@ -32,7 +39,23 @@ public class CanService {
             // User 정보 업데이트
             User user = account.getUser();
             user.setUserHasCan(true);
+            user.setUserLeagueKind(1);
             userRepository.save(user);
+
+            enterLeague(user);
+        }
+    }
+
+    // 깡통 적금 가입시 리그 참여
+    public void enterLeague(User user){
+        if(rankingRepository.findRankingByRankingUserID(user.getUserID()) == null){
+            Ranking ranking = Ranking.builder()
+                    .rankingUserName(user.getUserName())
+                    .rankingMonthScore(0)
+                    .rankingUserTotalScore(user.getUserTotalScore())
+                    .rankingLeagueKind(user.getUserLeagueKind())
+                    .build();
+            rankingRepository.save(ranking);
         }
     }
 
@@ -56,13 +79,26 @@ public class CanService {
 
                 redirectURL = "/myAccount";
             }
-            accountRepository.updateBalanceAndResetCanAmount(accountID);
         }
         return redirectURL;
     }
 
     private void terminateCanByAccountID(Long accountID) {
-        // 깡통 해지 관련 비즈니스 로직
+        // balance 받아오기 (update후 거래 내역에 추가해야 하기 때문
+        int balance = accountRepository.findCanAmountByAccountID(accountID);
+        int amount = accountRepository.findAmountByAccountID(accountID);
+        accountRepository.updateBalanceAndResetCanAmount(accountID);
+        //  + 거래 내역에 돈 입금 된 거 추가하기
+        Account account = Account.builder().accountID(accountID).build();
+        Transaction transaction = Transaction.builder()
+                .account(account)
+                .transactionIsDeposit(true)
+                .transactionDate(LocalDateTime.now())
+                .transactionMoney(balance)
+                .transactionName("깡통")
+                .transactionBalance(amount)
+                .build();
+        transactionRepository.save(transaction);
     }
 
 }

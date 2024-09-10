@@ -16,6 +16,9 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
     @Query("SELECT a.accountCanAmount FROM Account a WHERE a.accountID = :accountID")
     int findCanAmountByAccountID (@Param("accountID") Long accountID);
 
+    @Query("SELECT a.accountBalance FROM Account a WHERE a.accountID = :accountID")
+    int findAmountByAccountID (@Param("accountID") Long accountID);
+
     @Query("SELECT a.user.userID FROM Account a WHERE a.accountID = :accountID")
     Long findUserIDByAccountID(@Param("accountID") Long accountID);
 
